@@ -1,6 +1,10 @@
 const User = require("../models/userModel");
 const jwt = require("jsonwebtoken");
 
+function verifyToken(token) {
+  return jwt.verify(token, process.env.JWT_SECRET);
+}
+
 exports.protect = async (req, res, next) => {
   try {
     const token = req.cookies?.jwt;
@@ -8,7 +12,7 @@ exports.protect = async (req, res, next) => {
     if (!token) {
       throw new Error("No token found");
     }
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const decoded = verifyToken(token);
 
     req.user = await User.findById(decoded.id).select("-password");
 
@@ -16,6 +20,27 @@ exports.protect = async (req, res, next) => {
       throw new Error("User not found");
     }
 
+    next();
+  } catch (error) {
+    res.status(401).json({
+      status: "fail",
+      message: error.message,
+    });
+  }
+};
+
+exports.checkSignin = async (req, res, next) => {
+  try {
+    const token = req.cookies?.jwt;
+
+    if (token) {
+      const decoded = verifyToken(token);
+
+      const user = await User.findById(decoded.id).select("-password");
+      if (user) {
+        throw new Error("User already logged in");
+      }
+    }
     next();
   } catch (error) {
     res.status(401).json({

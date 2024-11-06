@@ -50,7 +50,6 @@ exports.signup = async (req, res) => {
 
 exports.signout = async (req, res) => {
   try {
-    if (!req.cookies.jwt) throw new Error("Already signed out");
     res.clearCookie("jwt");
 
     res.status(200).json({
