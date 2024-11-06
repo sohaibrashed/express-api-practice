@@ -1,19 +1,14 @@
 const Product = require("../models/productModel");
+const paginate = require("../util/paginate");
 
 exports.getAllProducts = async (req, res) => {
   try {
-    let products;
-    const keyword = req.query || {};
-    if (keyword.hasOwnProperty("category")) {
-      products = await Product.find({ ...keyword });
-    } else {
-      products = await Product.find({});
-    }
+    const { data: products, pagination } = await paginate(Product, req.query);
 
     res.status(200).json({
       status: "success",
-      count: products.length,
-      message: products,
+      pagination,
+      data: products,
     });
   } catch (error) {
     res.status(400).json({

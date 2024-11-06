@@ -1,5 +1,6 @@
 const User = require("../models/userModel");
 const { generateToken } = require("../util/generateToken");
+const paginate = require("../util/paginate");
 
 exports.signin = async (req, res) => {
   try {
@@ -66,20 +67,12 @@ exports.signout = async (req, res) => {
 
 exports.getAllUsers = async (req, res) => {
   try {
-    let users;
-    const { role } = req.query;
-    console.log(req.query);
-
-    if (role === "admin" || role === "user") {
-      users = await User.find({ role });
-    } else {
-      users = await User.find({});
-    }
+    const { data: users, pagination } = await paginate(User, req.query);
 
     res.status(200).json({
       status: "success",
-      count: users.length,
-      message: users,
+      pagination,
+      data: users,
     });
   } catch (error) {
     res.status(404).json({
