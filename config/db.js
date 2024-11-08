@@ -1,7 +1,7 @@
 require("dotenv").config();
 const mongoose = require("mongoose");
 
-const DB = process.env.DB_CONNECTION.replace(
+const DB = process.env.MONGODB_URI.replace(
   "<db_password>",
   process.env.DB_PASSWORD
 );
