@@ -1,6 +1,6 @@
-# Express API with MongoDB and Mongoose
+# Express API with MongoDB, Mongoose, Authentication & Authorization
 
-This project is a simple RESTful API built using Express, MongoDB, and Mongoose. It demonstrates basic CRUD operations (Create, Read, Update, Delete) for managing resources.
+This project is a RESTful API built using Express, MongoDB, and Mongoose. It includes authentication and authorization with JWT, role-based access control, and middleware for validation and error handling.
 
 ## Table of Contents
 
