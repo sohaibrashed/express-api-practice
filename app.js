@@ -2,6 +2,11 @@ require("dotenv").config();
 const express = require("express");
 const morgan = require("morgan");
 const cookieParser = require("cookie-parser");
+const helmet = require("helmet");
+const hpp = require("hpp");
+const sanitize = require("express-mongo-sanitize");
+// const xss = require("xss");
+
 const userRouter = require("./routes/user");
 const productRouter = require("./routes/product");
 const { errorHandler } = require("./middlewares/errorHandler");
@@ -13,7 +18,12 @@ if (process.env.NODE_ENV === "development") {
 }
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
 app.use(cookieParser());
+app.use(helmet());
+app.use(sanitize());
+app.use(hpp());
+// app.use(xss());
 
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/products", productRouter);

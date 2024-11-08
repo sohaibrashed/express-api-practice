@@ -8,8 +8,8 @@ const DB = process.env.DB_CONNECTION.replace(
 
 const connectDB = async () => {
   try {
-    await mongoose.connect(DB);
-    console.log("DB connection sucessfull");
+    const conn = await mongoose.connect(DB);
+    console.log(`MongoDB connected sucessfully on: ${conn.connection.host}`);
   } catch (error) {
     console.error("DB connection failed, error message: " + error.message);
     process.exit(1);

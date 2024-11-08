@@ -8,6 +8,7 @@ const {
 } = require("../controllers/user");
 const { signup, signin, signout } = require("../controllers/auth");
 const { checkAdmin, protect, checkSignin } = require("../middlewares/auth");
+const checkObjectId = require("../middlewares/checkObjectId");
 const router = express.Router();
 
 router
@@ -21,8 +22,8 @@ router.route("/signout").get(signout);
 
 router
   .route("/:id")
-  .get(protect, checkAdmin, getOne)
-  .delete(protect, checkAdmin, deleteOne)
-  .patch(updateOne);
+  .get(protect, checkAdmin, checkObjectId, getOne)
+  .delete(protect, checkAdmin, checkObjectId, deleteOne)
+  .patch(checkObjectId, updateOne);
 
 module.exports = router;
