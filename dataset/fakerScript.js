@@ -4,7 +4,6 @@ const fs = require("fs");
 const nProducts = 20000;
 const products = [];
 
-// Category options with subcategories
 const categories = {
   Clothing: ["Shirts", "Pants", "Jackets", "Sweaters"],
   Footwear: ["Shoes", "Boots", "Sandals", "Sneakers"],
@@ -23,7 +22,7 @@ for (let i = 0; i < nProducts; i++) {
     category,
     subCategory,
     size: faker.helpers.arrayElement(["XS", "S", "M", "L", "XL"]),
-    color: faker.color.human(), // Uses faker.color.human() for color names
+    color: faker.color.human(),
     material: faker.helpers.arrayElement([
       "Cotton",
       "Leather",
@@ -31,9 +30,9 @@ for (let i = 0; i < nProducts; i++) {
       "Wool",
       "Silk",
     ]),
-    stock: faker.number.int({ min: 0, max: 100 }), // Updated to use faker.number.int()
-    ratings: parseFloat(faker.number.float({ min: 1, max: 5, precision: 0.1 })), // Generates float ratings
-    tags: faker.word.words(3).split(" "), // Generates a list of words as tags
+    stock: faker.number.int({ min: 0, max: 100 }),
+    ratings: parseFloat(faker.number.float({ min: 1, max: 5, precision: 0.1 })),
+    tags: faker.word.words(3).split(" "),
     dateAdded: faker.date.recent(),
     brand: faker.company.name(),
     images: [
