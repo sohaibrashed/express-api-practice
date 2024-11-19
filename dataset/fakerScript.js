@@ -31,7 +31,9 @@ for (let i = 0; i < nProducts; i++) {
       "Silk",
     ]),
     stock: faker.number.int({ min: 0, max: 100 }),
-    ratings: parseFloat(faker.number.float({ min: 1, max: 5, precision: 0.1 })),
+    ratings: parseFloat(
+      faker.number.float({ min: 1, max: 5, fractionDigits: 2 })
+    ),
     tags: faker.word.words(3).split(" "),
     dateAdded: faker.date.recent(),
     brand: faker.company.name(),
