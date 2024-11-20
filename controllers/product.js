@@ -1,105 +1,86 @@
 const Product = require("../models/product");
 const paginate = require("../util/paginate");
+const exceptionHandler = require("../middlewares/exceptionHandler");
 
-exports.getAll = async (req, res, next) => {
-  try {
-    const { data, pagination } = await paginate(Product, req.query);
+exports.getAll = exceptionHandler(async (req, res, next) => {
+  const { data, pagination } = await paginate(Product, req.query);
 
-    if (!data) {
-      const error = new Error("products doesn't exist");
-      error.statusCode = 400;
-      throw error;
-    }
-
-    res.status(200).json({
-      status: "success",
-      pagination,
-      data,
-    });
-  } catch (error) {
-    next(error);
+  if (!data) {
+    const error = new Error("products doesn't exist");
+    error.statusCode = 400;
+    throw error;
   }
-};
 
-exports.getOne = async (req, res, next) => {
-  try {
-    const id = req.params.id;
+  res.status(200).json({
+    status: "success",
+    pagination,
+    data,
+  });
+});
 
-    const product = await Product.findById(id);
+exports.getOne = exceptionHandler(async (req, res, next) => {
+  const id = req.params.id;
 
-    if (!product) {
-      const error = new Error(`product with this ID: ${id} doesn't exist`);
-      error.statusCode = 404;
-      throw error;
-    }
+  const product = await Product.findById(id);
 
-    res.status(200).json({
-      status: "success",
-      data: product,
-    });
-  } catch (error) {
-    next(error);
+  if (!product) {
+    const error = new Error(`product with this ID: ${id} doesn't exist`);
+    error.statusCode = 404;
+    throw error;
   }
-};
 
-exports.create = async (req, res, next) => {
-  try {
-    const product = await Product.create({ ...req.body });
+  res.status(200).json({
+    status: "success",
+    data: product,
+  });
+});
 
-    if (!product) {
-      const error = new Error("product NOT created");
-      error.statusCode = 400;
-      throw error;
-    }
+exports.create = exceptionHandler(async (req, res, next) => {
+  const product = await Product.create({ ...req.body });
 
-    res.status(201).json({
-      status: "success",
-      data: product,
-    });
-  } catch (error) {
-    next(error);
+  if (!product) {
+    const error = new Error("product NOT created");
+    error.statusCode = 400;
+    throw error;
   }
-};
 
-exports.deleteOne = async (req, res, next) => {
-  try {
-    const id = req.params.id;
+  res.status(201).json({
+    status: "success",
+    data: product,
+  });
+});
 
-    const deletedProduct = await Product.findByIdAndDelete({ _id: id });
+exports.deleteOne = exceptionHandler(async (req, res, next) => {
+  const id = req.params.id;
 
-    if (!deletedProduct) {
-      const error = new Error(`product with this ID: ${id} doesn't exist`);
-      error.statusCode = 404;
-      throw error;
-    }
+  const deletedProduct = await Product.findByIdAndDelete({ _id: id });
 
-    res.status(200).json({
-      status: "success",
-      deletedProduct,
-    });
-  } catch (error) {
-    next(error);
+  if (!deletedProduct) {
+    const error = new Error(`product with this ID: ${id} doesn't exist`);
+    error.statusCode = 404;
+    throw error;
   }
-};
 
-exports.updateOne = async (req, res, next) => {
-  try {
-    const id = req.params.id;
-    const updatedProduct = await Product.findByIdAndUpdate(id, req.body, {
-      runValidators: true,
-    });
+  res.status(200).json({
+    status: "success",
+    deletedProduct,
+  });
+});
 
-    if (!updatedProduct) {
-      const error = new Error(`product with this ID: ${id} doesn't exist`);
-      error.statusCode = 404;
-      throw error;
-    }
+exports.updateOne = exceptionHandler(async (req, res, next) => {
+  const id = req.params.id;
+  const updatedProduct = await Product.findByIdAndUpdate(id, req.body, {
+    runValidators: true,
+  });
 
-    res.status(200).json({
-      status: "success",
-      updatedProduct,
-    });
-  } catch (error) {
-    next(error);
+  if (!updatedProduct) {
+    const error = new Error(`product with this ID: ${id} doesn't exist`);
+    error.statusCode = 404;
+    throw error;
   }
-};
+
+  res.status(200).json({
+    status: "success",
+    updatedProduct,
+  });
+});

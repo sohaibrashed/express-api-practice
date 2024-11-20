@@ -128,5 +128,8 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+
+#data files
 /dataset/ecommerce_clothes_data.json
 /dataset/ecommerce_clothes_data.sql
+/dataset/ecommerce_users_data.json

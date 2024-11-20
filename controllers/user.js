@@ -1,107 +1,88 @@
 const User = require("../models/user");
 const paginate = require("../util/paginate");
+const exceptionHandler = require("../middlewares/exceptionHandler");
 
-exports.create = async (req, res, next) => {
-  try {
-    const { email, password, role } = req.body;
+exports.create = exceptionHandler(async (req, res) => {
+  const { name, email, password, role } = req.body;
 
-    const newUser = await User.create({ email, password, role });
+  const newUser = await User.create({ name, email, password, role });
 
-    if (!newUser) {
-      const error = new Error("user NOT created!");
-      error.statusCode = 400;
-      throw error;
-    }
-
-    res.status(201).json({
-      status: "success",
-      data: newUser,
-    });
-  } catch (error) {
-    next(error);
+  if (!newUser) {
+    const error = new Error("user NOT created!");
+    error.statusCode = 400;
+    throw error;
   }
-};
 
-exports.getAll = async (req, res, next) => {
-  try {
-    const { data, pagination } = await paginate(User, req.query);
+  res.status(201).json({
+    status: "success",
+    data: newUser,
+  });
+});
 
-    if (!data) {
-      const error = new Error("users data not found");
-      error.statusCode = 404;
-      throw error;
-    }
+exports.getAll = exceptionHandler(async (req, res) => {
+  const { data, pagination } = await paginate(User, req.query);
 
-    res.status(200).json({
-      status: "success",
-      pagination,
-      data,
-    });
-  } catch (error) {
-    next(error);
+  if (!data) {
+    const error = new Error("users data not found");
+    error.statusCode = 404;
+    throw error;
   }
-};
 
-exports.getOne = async (req, res, next) => {
-  try {
-    const id = req.params.id;
+  res.status(200).json({
+    status: "success",
+    pagination,
+    data,
+  });
+});
 
-    const user = await User.findById(id);
+exports.getOne = exceptionHandler(async (req, res) => {
+  const id = req.params.id;
 
-    if (!user) {
-      const error = new Error(`user with this ID: ${id} doesn't exist`);
-      error.statusCode = 404;
-      throw error;
-    }
+  const user = await User.findById(id);
 
-    res.status(200).json({
-      status: "success",
-      data: user,
-    });
-  } catch (error) {
-    next(error);
+  if (!user) {
+    const error = new Error(`user with this ID: ${id} doesn't exist`);
+    error.statusCode = 404;
+    throw error;
   }
-};
 
-exports.deleteOne = async (req, res, next) => {
-  try {
-    const id = req.params.id;
+  res.status(200).json({
+    status: "success",
+    data: user,
+  });
+});
 
-    const deletedUser = await User.findByIdAndDelete({ _id: id });
+exports.deleteOne = exceptionHandler(async (req, res) => {
+  const id = req.params.id;
 
-    if (!deletedUser) {
-      const error = new Error(`user with this ID: ${id} doesn't exist`);
-      error.statusCode = 404;
-      throw error;
-    }
+  const deletedUser = await User.findByIdAndDelete({ _id: id });
 
-    res.status(200).json({
-      status: "success",
-      deletedUser,
-    });
-  } catch (error) {
-    next(error);
+  if (!deletedUser) {
+    const error = new Error(`user with this ID: ${id} doesn't exist`);
+    error.statusCode = 404;
+    throw error;
   }
-};
 
-exports.updateOne = async (req, res, next) => {
-  try {
-    const id = req.params.id;
-    const updatedUser = await User.findByIdAndUpdate(id, req.body, {
-      runValidators: true,
-    });
+  res.status(200).json({
+    status: "success",
+    deletedUser,
+  });
+});
 
-    if (!updatedUser) {
-      const error = new Error(`user with this ID: ${id} doesn't exist`);
-      error.statusCode = 404;
-      throw error;
-    }
+exports.updateOne = exceptionHandler(async (req, res) => {
+  const id = req.params.id;
+  const updatedUser = await User.findByIdAndUpdate(id, req.body, {
+    runValidators: true,
+  });
 
-    res.status(200).json({
-      status: "success",
-      updatedUser,
-    });
-  } catch (error) {
-    next(error);
+  if (!updatedUser) {
+    const error = new Error(`user with this ID: ${id} doesn't exist`);
+    error.statusCode = 404;
+    throw error;
   }
-};
+
+  res.status(200).json({
+    status: "success",
+    updatedUser,
+  });
+});

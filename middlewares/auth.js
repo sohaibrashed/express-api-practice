@@ -22,10 +22,7 @@ exports.protect = async (req, res, next) => {
 
     next();
   } catch (error) {
-    res.status(401).json({
-      status: "fail",
-      message: error.message,
-    });
+    next(error);
   }
 };
 
@@ -43,24 +40,33 @@ exports.checkSignin = async (req, res, next) => {
     }
     next();
   } catch (error) {
-    res.status(401).json({
-      status: "fail",
-      message: error.message,
-    });
+    next(error);
   }
 };
 
-exports.checkAdmin = async (req, res, next) => {
+exports.checkAccess = async (req, res, next) => {
   try {
-    if (req.user && req.user.role === "admin") {
+    if (req.user && req.user.role !== "user") {
+      if (
+        (req.baseUrl === "/api/v1/users" && req.route.path === "/:id") ||
+        req.method === "DELETE"
+      ) {
+        if (req.user.role === "admin") {
+          const id = req.params.id;
+
+          const checkUser = await User.findById(id);
+
+          if (!checkUser)
+            throw new Error(`user with this ID: ${id} doesn't exist`);
+
+          if (checkUser.role !== "user") throw new Error("Not Authorized");
+        }
+      }
       next();
     } else {
-      throw new Error("Not authorized as admin");
+      throw new Error(`Role: ${req.user.role} is not Authorized`);
     }
   } catch (error) {
-    res.status(401).json({
-      status: "fail",
-      message: error.message,
-    });
+    next(error);
   }
 };

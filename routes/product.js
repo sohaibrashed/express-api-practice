@@ -6,17 +6,24 @@ const {
   deleteOne,
   updateOne,
 } = require("../controllers/product");
-const { protect, checkAdmin } = require("../middlewares/auth");
+
+const { productValidator } = require("../validators/product");
+
+const checkValidation = require("../middlewares/checkValidation");
+const { protect, checkAccess } = require("../middlewares/auth");
 const checkObjectId = require("../middlewares/checkObjectId");
 
 const router = express.Router();
 
-router.route("/").get(getAll).post(protect, checkAdmin, create);
+router
+  .route("/")
+  .get(getAll)
+  .post(protect, checkAccess, productValidator, checkValidation, create);
 
 router
   .route("/:id")
   .get(checkObjectId, getOne)
-  .delete(protect, checkAdmin, checkObjectId, deleteOne)
-  .patch(protect, checkAdmin, checkObjectId, updateOne);
+  .delete(protect, checkAccess, checkObjectId, deleteOne)
+  .patch(protect, checkAccess, checkObjectId, updateOne);
 
 module.exports = router;

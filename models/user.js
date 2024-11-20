@@ -4,22 +4,35 @@ const bcrypt = require("bcrypt");
 
 const userSchema = new mongoose.Schema(
   {
+    name: {
+      type: String,
+      trim: true,
+      required: [true, "Please provide your name"],
+      maxlength: [80, "Name cannot exceed 50 characters"],
+      validate: [
+        validate.isAlpha,
+        "Please provide a valid name (only Aplhabets)",
+      ],
+    },
     email: {
       type: String,
       unique: true,
       trim: true,
       lowercase: true,
       required: [true, "Please provide your email"],
-      validate: [validate.isEmail, "Plese provide a valid email"],
+      validate: [validate.isEmail, "Please provide a valid email"],
     },
     password: {
       type: String,
       required: [true, "Please provide password (min 8 length)"],
-      minlength: 8,
+      minlength: 6,
       select: false,
     },
     role: {
       type: String,
+      lowercase: true,
+      trim: true,
+      enum: ["user", "admin", "owner"],
       default: "user",
     },
   },

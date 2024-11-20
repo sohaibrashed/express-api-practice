@@ -1,62 +1,54 @@
 const User = require("../models/user");
 const { generateToken } = require("../util/generateToken");
+const exceptionHandler = require("../middlewares/exceptionHandler");
 
-exports.signin = async (req, res, next) => {
-  try {
-    const { email, password } = req.body;
+exports.signup = exceptionHandler(async (req, res, next) => {
+  const { name, email, password, role } = req.body;
+  const newUser = await User.create({
+    name,
+    email,
+    password,
+    role,
+  });
 
-    const user = await User.findOne({ email }).select("+password");
-
-    if (user && (await user.matchPassword(password))) {
-      generateToken(res, user._id);
-      res.status(201).json({
-        status: "success",
-        data: user,
-      });
-    } else {
-      const error = new Error("Invalid email or password");
-      error.statusCode = 400;
-      throw error;
-    }
-  } catch (error) {
-    next(error);
+  if (!newUser) {
+    const error = new Error("Something went wrong with signup");
+    error.statusCode = 400;
+    throw error;
   }
-};
 
-exports.signup = async (req, res, next) => {
-  try {
-    const { email, password, role } = req.body;
-    const newUser = await User.create({
-      email,
-      password,
-      role,
-    });
+  generateToken(res, newUser._id);
 
-    if (!newUser) {
-      const error = new Error("Something went wrong with signup");
-      error.statusCode = 400;
-      throw error;
-    }
+  res.status(201).json({
+    status: "success",
+    data: newUser,
+  });
+});
 
-    generateToken(res, newUser._id);
+exports.signin = exceptionHandler(async (req, res) => {
+  const { email, password } = req.body;
+
+  const user = await User.findOne({ email }).select("+password");
+
+  if (user && (await user.matchPassword(password))) {
+    generateToken(res, user._id);
+
     res.status(201).json({
       status: "success",
-      data: newUser,
+      data: user,
     });
-  } catch (error) {
-    next(error);
+  } else {
+    const error = new Error("Invalid email or password");
+    error.statusCode = 400;
+    throw error;
   }
-};
+});
 
-exports.signout = async (req, res, next) => {
-  try {
-    res.clearCookie("jwt");
+exports.signout = exceptionHandler(async (req, res, next) => {
+  res.clearCookie("jwt");
 
-    res.status(200).json({
-      status: "success",
-      message: "user signout successfull",
-    });
-  } catch (error) {
-    next(error);
-  }
-};
+  res.status(200).json({
+    status: "success",
+    message: "user signout successfull",
+  });
+});
