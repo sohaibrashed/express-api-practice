@@ -18,12 +18,12 @@ const { protect, checkAccess } = require("../middlewares/auth");
 const checkObjectId = require("../middlewares/checkObjectId");
 const router = express.Router();
 
-router.route("/mine").get(protect, getAllMine);
-
 router
   .route("/")
   .get(protect, checkAccess, getAll)
   .post(protect, checkAccess, orderValidator, checkValidation, create);
+
+router.route("/mine").get(protect, getAllMine);
 
 router
   .route("/:id")

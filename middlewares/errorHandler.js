@@ -7,7 +7,7 @@ exports.errorHandler = (err, req, res, next) => {
     error: err.message || "Server error",
     details: err.details || null,
     stack:
-      process.env.NODE_ENV === "development" && err.stack
+      process.env.NODE_ENV !== "production" && err.stack
         ? err.stack.split("\n").map((line) => line.trim())
         : undefined,
   });

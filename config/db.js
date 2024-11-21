@@ -1,10 +1,19 @@
 require("dotenv").config();
 const mongoose = require("mongoose");
 
-const DB = process.env.MONGODB_URI.replace(
-  "<db_password>",
-  process.env.DB_PASSWORD
-);
+let DB = "";
+
+if (
+  process.env.NODE_ENV === "development" ||
+  process.env.NODE_ENV === "production"
+) {
+  DB = process.env.MONGODB_URI.replace(
+    "<db_password>",
+    process.env.DB_PASSWORD
+  );
+} else if (process.env.NODE_ENV === "test") {
+  DB = process.env.MONGODB_URI_TEST;
+}
 
 const connectDB = async () => {
   try {

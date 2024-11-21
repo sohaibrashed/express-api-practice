@@ -9,10 +9,6 @@ const userSchema = new mongoose.Schema(
       trim: true,
       required: [true, "Please provide your name"],
       maxlength: [80, "Name cannot exceed 50 characters"],
-      validate: [
-        validate.isAlpha,
-        "Please provide a valid name (only Aplhabets)",
-      ],
     },
     email: {
       type: String,

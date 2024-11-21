@@ -14,9 +14,11 @@ const { errorHandler } = require("./middlewares/errorHandler");
 
 const app = express();
 
-if (process.env.NODE_ENV === "development") {
+if (process.env.NODE_ENV !== "production") {
+  console.info(`Node Env: ${process.env.NODE_ENV}`);
   app.use(morgan("dev"));
 }
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 

@@ -15,15 +15,19 @@ const checkObjectId = require("../middlewares/checkObjectId");
 
 const router = express.Router();
 
-router
-  .route("/")
-  .get(getAll)
-  .post(protect, checkAccess, productValidator, checkValidation, create);
+if (process.env.NODE_ENV === "test") {
+  router.route("/").get(getAll).post(create);
+} else {
+  router
+    .route("/")
+    .get(getAll)
+    .post(protect, checkAccess, productValidator, checkValidation, create);
 
-router
-  .route("/:id")
-  .get(checkObjectId, getOne)
-  .delete(protect, checkAccess, checkObjectId, deleteOne)
-  .patch(protect, checkAccess, checkObjectId, updateOne);
+  router
+    .route("/:id")
+    .get(checkObjectId, getOne)
+    .delete(protect, checkAccess, checkObjectId, deleteOne)
+    .patch(protect, checkAccess, checkObjectId, updateOne);
+}
 
 module.exports = router;

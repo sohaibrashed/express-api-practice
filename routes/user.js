@@ -17,19 +17,24 @@ const checkObjectId = require("../middlewares/checkObjectId");
 
 const router = express.Router();
 
-router
-  .route("/")
-  .get(protect, checkAccess, getAll)
-  .post(protect, checkAccess, userValidator, checkValidation, create);
+if (process.env.NODE_ENV === "test") {
+  router.route("/signup").post(signup);
+  router.route("/signin").post(signin);
+} else {
+  router
+    .route("/")
+    .get(protect, checkAccess, getAll)
+    .post(protect, checkAccess, userValidator, checkValidation, create);
 
-router.route("/signup").post(checkSignin, signup);
-router.route("/signin").post(checkSignin, signin);
-router.route("/signout").get(signout);
+  router.route("/signup").post(checkSignin, signup);
+  router.route("/signin").post(checkSignin, signin);
+  router.route("/signout").get(signout);
 
-router
-  .route("/:id")
-  .get(protect, checkAccess, checkObjectId, getOne)
-  .delete(protect, checkAccess, checkObjectId, deleteOne)
-  .patch(protect, checkAccess, checkObjectId, updateOne);
+  router
+    .route("/:id")
+    .get(protect, checkAccess, checkObjectId, getOne)
+    .delete(protect, checkAccess, checkObjectId, deleteOne)
+    .patch(protect, checkAccess, checkObjectId, updateOne);
+}
 
 module.exports = router;

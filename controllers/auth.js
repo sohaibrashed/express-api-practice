@@ -33,7 +33,7 @@ exports.signin = exceptionHandler(async (req, res) => {
   if (user && (await user.matchPassword(password))) {
     generateToken(res, user._id);
 
-    res.status(201).json({
+    res.status(200).json({
       status: "success",
       data: user,
     });
