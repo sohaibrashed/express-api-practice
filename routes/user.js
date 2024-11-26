@@ -28,7 +28,7 @@ if (process.env.NODE_ENV === "test") {
 
   router.route("/signup").post(checkSignin, signup);
   router.route("/signin").post(checkSignin, signin);
-  router.route("/signout").get(signout);
+  router.route("/signout").post(signout);
 
   router
     .route("/:id")
