@@ -1,5 +1,6 @@
 require("dotenv").config();
 const express = require("express");
+const cors = require("cors");
 const morgan = require("morgan");
 const cookieParser = require("cookie-parser");
 const helmet = require("helmet");
@@ -13,6 +14,13 @@ const orderRouter = require("./routes/order");
 const { errorHandler } = require("./middlewares/errorHandler");
 
 const app = express();
+
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+  })
+);
 
 if (process.env.NODE_ENV !== "production") {
   console.info(`Node Env: ${process.env.NODE_ENV}`);

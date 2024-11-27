@@ -4,7 +4,7 @@ exports.errorHandler = (err, req, res, next) => {
   res.status(statusCode).json({
     status: "fail",
     statusCode,
-    error: err.message || "Server error",
+    message: err.message || "Server error",
     details: err.details || null,
     stack:
       process.env.NODE_ENV !== "production" && err.stack

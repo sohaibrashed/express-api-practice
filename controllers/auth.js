@@ -17,10 +17,11 @@ exports.signup = exceptionHandler(async (req, res, next) => {
     throw error;
   }
 
-  generateToken(res, newUser._id);
+  const token = generateToken(res, newUser._id);
 
   res.status(201).json({
     status: "success",
+    token,
     data: newUser,
   });
 });
@@ -31,10 +32,11 @@ exports.signin = exceptionHandler(async (req, res) => {
   const user = await User.findOne({ email }).select("+password");
 
   if (user && (await user.matchPassword(password))) {
-    generateToken(res, user._id);
+    const token = generateToken(res, user._id);
 
     res.status(200).json({
       status: "success",
+      token,
       data: user,
     });
   } else {
@@ -45,7 +47,7 @@ exports.signin = exceptionHandler(async (req, res) => {
 });
 
 exports.signout = exceptionHandler(async (req, res, next) => {
-  res.clearCookie("jwt");
+  res.clearCookie("jwt", { httpOnly: true, sameSite: "none" });
 
   res.status(200).json({
     status: "success",

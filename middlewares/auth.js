@@ -10,14 +10,18 @@ exports.protect = async (req, res, next) => {
     const token = req.cookies?.jwt;
 
     if (!token) {
-      throw new Error("No token found");
+      const error = new Error("No token found");
+      error.statusCode = 401;
+      throw error;
     }
     const decoded = verifyToken(token);
 
     req.user = await User.findById(decoded.id).select("-password");
 
     if (!req.user._id) {
-      throw new Error("User not found");
+      const error = new Error("User not Found");
+      error.statusCode = 401;
+      throw error;
     }
 
     next();
@@ -56,15 +60,24 @@ exports.checkAccess = async (req, res, next) => {
 
           const checkUser = await User.findById(id);
 
-          if (!checkUser)
-            throw new Error(`user with this ID: ${id} doesn't exist`);
+          if (!checkUser) {
+            const error = new Error(`user with this ID: ${id} doesn't exist`);
+            error.statusCode = 401;
+            throw error;
+          }
 
-          if (checkUser.role !== "user") throw new Error("Not Authorized");
+          if (checkUser.role !== "user") {
+            const error = new Error("Not Authorized");
+            error.statusCode = 401;
+            throw error;
+          }
         }
       }
       next();
     } else {
-      throw new Error(`Role: ${req.user.role} is not Authorized`);
+      const error = new Error(`Role: ${req.user.role} is not Authorized`);
+      error.statusCode = 401;
+      throw error;
     }
   } catch (error) {
     next(error);
