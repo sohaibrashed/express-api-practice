@@ -5,7 +5,7 @@ exports.generateToken = (res, id) => {
 
   res.cookie("jwt", token, {
     httpOnly: true,
-    secure: false,
+    secure: true,
     sameSite: "none",
   });
 
