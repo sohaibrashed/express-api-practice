@@ -1,7 +1,7 @@
 const { body } = require("express-validator");
 
 exports.userValidator = [
-  body("name").trim().notEmpty().isAlpha().withMessage("Name is required"),
+  body("name").trim().notEmpty().withMessage("Name is required"),
   body("email").notEmpty().isEmail().withMessage("Invalid email format"),
   body("password")
     .notEmpty()

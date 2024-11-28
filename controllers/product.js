@@ -31,7 +31,7 @@ exports.getOne = exceptionHandler(async (req, res, next) => {
 
   res.status(200).json({
     status: "success",
-    data: product,
+    product,
   });
 });
 
@@ -46,7 +46,7 @@ exports.create = exceptionHandler(async (req, res, next) => {
 
   res.status(201).json({
     status: "success",
-    data: product,
+    product,
   });
 });
 

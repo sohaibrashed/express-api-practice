@@ -47,7 +47,7 @@ exports.signin = exceptionHandler(async (req, res) => {
 });
 
 exports.signout = exceptionHandler(async (req, res, next) => {
-  res.clearCookie("jwt", { httpOnly: true, sameSite: "none" });
+  res.clearCookie("jwt", { httpOnly: true, secure: true, sameSite: "none" });
 
   res.status(200).json({
     status: "success",
