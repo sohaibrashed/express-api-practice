@@ -7,7 +7,7 @@ function verifyToken(token) {
 
 exports.protect = async (req, res, next) => {
   try {
-    const token = req.cookies?.jwt;
+    const token = await req.cookies?.jwt;
 
     if (!token) {
       const error = new Error("No token found");
@@ -32,7 +32,7 @@ exports.protect = async (req, res, next) => {
 
 exports.checkSignin = async (req, res, next) => {
   try {
-    const token = req.cookies?.jwt;
+    const token = await req.cookies?.jwt;
 
     if (token) {
       const decoded = verifyToken(token);
@@ -52,7 +52,8 @@ exports.checkAccess = async (req, res, next) => {
   try {
     if (req.user && req.user.role !== "user") {
       if (
-        (req.baseUrl === "/api/v1/users" && req.route.path === "/:id") ||
+        req.baseUrl === "/api/v1/users" &&
+        req.route.path === "/:id" &&
         req.method === "DELETE"
       ) {
         if (req.user.role === "admin") {
