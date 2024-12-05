@@ -45,13 +45,6 @@ const OrderSchema = new mongoose.Schema(
       type: Number,
       required: [true, "Total amount is required."],
       min: [0, "Total amount must be a positive value."],
-      validate: {
-        validator: function (value) {
-          let total = this.items.reduce((sum, item) => sum + item.total, 0);
-          return value === parseFloat(total.toFixed(2));
-        },
-        message: "Total amount does not match the sum of item totals.",
-      },
     },
     paymentMethod: {
       type: String,
