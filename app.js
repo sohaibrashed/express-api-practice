@@ -11,6 +11,8 @@ const sanitize = require("express-mongo-sanitize");
 const userRouter = require("./routes/user");
 const productRouter = require("./routes/product");
 const orderRouter = require("./routes/order");
+const dashboardRouter = require("./routes/dashboard");
+
 const { errorHandler } = require("./middlewares/errorHandler");
 
 const app = express();
@@ -39,6 +41,7 @@ app.use(hpp());
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/products", productRouter);
 app.use("/api/v1/orders", orderRouter);
+app.use("/api/v1/dashboard", dashboardRouter);
 
 app.all("*", (req, res, next) => {
   next(new Error(`this ${req.path} URL, NOT FOUND`));

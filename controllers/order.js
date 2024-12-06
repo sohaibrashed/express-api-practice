@@ -109,8 +109,10 @@ exports.getAllMine = exceptionHandler(async (req, res) => {
 
 //GET request
 exports.getOne = exceptionHandler(async (req, res) => {
-  const id = req.params.id;
-  const order = await Order.findById(id);
+  const { id } = req.params;
+  const order = await Order.findById(id)
+    .populate("user", "_id name email role")
+    .populate("items.product", "_id name stock price");
 
   if (!order) {
     throw new Error(`Order ID: ${id} doesn't exist`);
@@ -124,7 +126,7 @@ exports.getOne = exceptionHandler(async (req, res) => {
 
 //PATCH request
 exports.updateOne = exceptionHandler(async (req, res) => {
-  const id = req.params.id;
+  const { id } = req.params;
   const order = await Order.findByIdAndUpdate(id, req.body, {
     runValidators: true,
     new: true,
@@ -142,7 +144,7 @@ exports.updateOne = exceptionHandler(async (req, res) => {
 
 //DELETE request
 exports.deleteOne = exceptionHandler(async (req, res) => {
-  const id = req.params.id;
+  const { id } = req.params;
   const order = await Order.findByIdAndDelete(id);
 
   if (!order) {
@@ -156,7 +158,7 @@ exports.deleteOne = exceptionHandler(async (req, res) => {
 
 //PATCH request
 exports.updatePaymentStatus = exceptionHandler(async (req, res) => {
-  const id = req.params.id;
+  const { id } = req.params;
   const { paymentStatus } = req.body;
 
   if (!paymentStatus) {
@@ -186,7 +188,7 @@ exports.updatePaymentStatus = exceptionHandler(async (req, res) => {
 
 //PATCH request
 exports.updateOrderStatus = exceptionHandler(async (req, res) => {
-  const id = req.params.id;
+  const { id } = req.params;
   const { orderStatus } = req.body;
 
   if (!orderStatus) {
