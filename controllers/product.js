@@ -84,3 +84,19 @@ exports.updateOne = exceptionHandler(async (req, res, next) => {
     updatedProduct,
   });
 });
+
+exports.getTrending = exceptionHandler(async (req, res) => {
+  const trendingProducts = await Product.find({ ratings: { $gte: 4 } })
+    .sort({ ratings: -1, stock: -1 })
+    .limit(process.env.TREND_LIMIT || 10);
+
+  if (trendingProducts.length === 0) {
+    throw new Error("No trending products found");
+  }
+
+  res.status(200).json({
+    status: "success",
+    count: trendingProducts.length,
+    products: trendingProducts,
+  });
+});

@@ -21,7 +21,7 @@ const router = express.Router();
 router
   .route("/")
   .get(protect, checkAccess, getAll)
-  .post(protect, checkAccess, orderValidator, checkValidation, create);
+  .post(protect, checkAccess, create);
 
 router.route("/mine").get(protect, getAllMine);
 

@@ -1,4 +1,5 @@
 //controller
+const mongoose = require("mongoose");
 const Order = require("../models/order");
 const Product = require("../models/product");
 const paginate = require("../util/paginate");
@@ -8,64 +9,73 @@ const exceptionHandler = require("../middlewares/exceptionHandler");
 exports.create = exceptionHandler(async (req, res) => {
   const { items, shippingAddress, paymentMethod } = req.body;
 
-  if (items.length === 0) throw new Error("No products found");
+  if (!items || items.length === 0 || !shippingAddress || !paymentMethod) {
+    throw new Error("Invalid order creation pattern");
+  }
 
   let totalAmount = 0;
 
-  const validatedItems = await Promise.all(
-    items.map(async (item) => {
-      const product = await Product.findById(item.product);
+  const session = await mongoose.startSession();
+  session.startTransaction();
 
-      if (!product) {
-        throw new Error(`Product with ID ${item.product} not found.`);
-      }
+  try {
+    const validatedItems = await Promise.all(
+      items.map(async (item) => {
+        const product = await Product.findById(item._id).session(session);
 
-      const price = product.price;
-      const total = price * item.quantity;
+        if (!product) {
+          throw new Error(`Product with ID ${item._id} not found.`);
+        }
 
-      totalAmount += total;
+        if (product.stock < item.quantity) {
+          throw new Error(`Product ${product.name} is out of stock`);
+        }
 
-      return {
-        product: item.product,
-        quantity: item.quantity,
-        price,
-        total,
-      };
-    })
-  );
+        const price = product.price;
+        const total = price * item.quantity;
 
-  totalAmount = parseFloat(totalAmount.toFixed(2));
+        totalAmount += total;
 
-  const order = new Order({
-    user: req.user._id,
-    items: validatedItems,
-    totalAmount,
-    paymentMethod,
-    shippingAddress,
-  });
+        product.stock -= item.quantity;
+        await product.save({ session });
 
-  const savedOrder = await order.save();
+        return {
+          product: item._id,
+          quantity: item.quantity,
+          price,
+          total,
+        };
+      })
+    );
 
-  for (const item of items) {
-    const product = await Product.findById(item.product);
+    totalAmount = parseFloat(totalAmount.toFixed(2));
 
-    if (product) {
-      product.stock -= item.quantity;
+    const order = new Order({
+      user: req.user._id,
+      items: validatedItems,
+      totalAmount,
+      paymentMethod,
+      shippingAddress,
+    });
 
-      if (product.stock < 0) {
-        res.status(400);
-        throw new Error(`Product ${product.name} is out of stock`);
-      }
+    const savedOrder = await order.save({ session });
 
-      await product.save();
-      // console.log("product stock updated successfully: ", product);
-    }
+    await session.commitTransaction();
+
+    res.status(201).json({
+      status: "success",
+      data: savedOrder,
+    });
+  } catch (error) {
+    await session.abortTransaction();
+
+    res.status(400).json({
+      status: "error",
+      message: error.message,
+    });
+  } finally {
+    session.endSession();
   }
-
-  res.status(201).json({
-    status: "success",
-    data: savedOrder,
-  });
 });
 
 //GET request
@@ -112,7 +122,7 @@ exports.getOne = exceptionHandler(async (req, res) => {
   const { id } = req.params;
   const order = await Order.findById(id)
     .populate("user", "_id name email role")
-    .populate("items.product", "_id name stock price");
+    .populate("items.product", "_id images name stock price");
 
   if (!order) {
     throw new Error(`Order ID: ${id} doesn't exist`);

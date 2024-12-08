@@ -5,6 +5,7 @@ const {
   getOne,
   deleteOne,
   updateOne,
+  getTrending,
 } = require("../controllers/product");
 
 const { productValidator } = require("../validators/product");
@@ -18,6 +19,8 @@ const router = express.Router();
 if (process.env.NODE_ENV === "test") {
   router.route("/").get(getAll).post(create);
 } else {
+  router.route("/trending").get(getTrending);
+
   router
     .route("/")
     .get(getAll)
