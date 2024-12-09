@@ -8,6 +8,7 @@
     "test:user": "jest __test__/user.test.js",
     "test:user:unit": "jest __test__/user_unit.test.js",
     "test:product": "jest __test__/product.test.js",
+    "seeder": "node seeder.js",
     "server": "nodemon server.js"
   },
   "jest": {

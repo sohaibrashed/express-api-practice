@@ -1,20 +1,19 @@
-const paginate = async (model, queryParams) => {
-  const { page = 1, limit = process.env.LIMIT, ...filters } = queryParams;
+const paginate = async (model, queryParams, populateFields = []) => {
+  const { page = 1, limit = process.env.LIMIT || 10, ...filters } = queryParams;
 
   const currentPage = Math.max(1, parseInt(page));
   const itemsPerPage = Math.max(1, parseInt(limit));
   const skip = (currentPage - 1) * itemsPerPage;
 
-  // pipeline not working due to type casting
-  // const pipeline = [
-  //   { $match: filters },
-  //   { $skip: skip },
-  //   { $limit: itemsPerPage },
-  // ];
+  let query = model.find(filters).skip(skip).limit(itemsPerPage);
 
-  // const results = await model.aggregate(pipeline);
+  if (populateFields.length > 0) {
+    populateFields.forEach((field) => {
+      query = query.populate(field);
+    });
+  }
 
-  const results = await model.find(filters).skip(skip).limit(itemsPerPage);
+  const results = await query;
   const totalItems = await model.countDocuments(filters);
   const totalPages = Math.ceil(totalItems / itemsPerPage);
 

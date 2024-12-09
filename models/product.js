@@ -1,15 +1,6 @@
 const mongoose = require("mongoose");
 const validate = require("validator");
 
-const categories = {
-  Clothing: ["Shirts", "Pants", "Jackets", "Sweaters"],
-  Footwear: ["Shoes", "Boots", "Sandals", "Sneakers"],
-  Accessories: ["Hats", "Belts", "Gloves", "Scarves"],
-  Bags: ["Handbags", "Backpacks", "Wallets", "Duffel Bags"],
-};
-
-const validSizes = ["XS", "S", "M", "L", "XL"];
-
 const productSchema = new mongoose.Schema(
   {
     name: {
@@ -29,28 +20,19 @@ const productSchema = new mongoose.Schema(
       min: [0, "Price must be a positive number"],
     },
     category: {
-      type: String,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Category",
       required: [true, "Please select a category"],
-      enum: {
-        values: Object.keys(categories),
-        message: "{VALUE} is not a valid category",
-      },
     },
     subCategory: {
-      type: String,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "SubCategory",
       required: [true, "Please select a sub-category"],
-      validate: {
-        validator: function (value) {
-          const validSubcategories = categories[this.category];
-          return validSubcategories?.includes(value);
-        },
-        message: "Sub-category {VALUE} is not valid for the selected category",
-      },
     },
     size: {
       type: String,
       enum: {
-        values: validSizes,
+        values: ["XS", "S", "M", "L", "XL"],
         message: "Size {VALUE} is not valid",
       },
     },
