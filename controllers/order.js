@@ -80,7 +80,10 @@ exports.create = exceptionHandler(async (req, res) => {
 
 //GET request
 exports.getAll = exceptionHandler(async (req, res) => {
-  const { data, pagination } = await paginate(Order, req.query);
+  const { data, pagination } = await paginate(Order, req.query, [
+    { path: "items.product", select: "_id images name stock price" },
+    { path: "user", select: "_id name email role" },
+  ]);
 
   if (!data) {
     const error = new Error("orders doesn't exist");
@@ -103,7 +106,10 @@ exports.getAllMine = exceptionHandler(async (req, res) => {
 
   const filters = { ...req.query, user: _id };
 
-  const { data, pagination } = await paginate(Order, filters);
+  const { data, pagination } = await paginate(Order, filters, [
+    { path: "items.product", select: "_id images name stock price" },
+    { path: "user", select: "_id name email role" },
+  ]);
 
   if (!data) {
     const error = new Error("orders doesn't exist");
