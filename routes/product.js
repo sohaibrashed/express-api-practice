@@ -6,6 +6,10 @@ const {
   deleteOne,
   updateOne,
   getTrending,
+  getCategories,
+  createCategory,
+  getSubCategories,
+  createSubCategory,
 } = require("../controllers/product");
 
 const { productValidator } = require("../validators/product");
@@ -19,6 +23,16 @@ const router = express.Router();
 if (process.env.NODE_ENV === "test") {
   router.route("/").get(getAll).post(create);
 } else {
+  router
+    .route("/category")
+    .get(getCategories)
+    .post(protect, checkAccess, createCategory);
+
+  router
+    .route("/subcategory")
+    .get(getSubCategories)
+    .post(protect, checkAccess, createSubCategory);
+
   router.route("/trending").get(getTrending);
 
   router

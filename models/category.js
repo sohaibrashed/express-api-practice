@@ -1,16 +1,11 @@
 const mongoose = require("mongoose");
-const predefinedCategories = require("../util/predefinedCategories");
 
 const categorySchema = new mongoose.Schema({
   name: {
     type: String,
     required: [true, "Please provide the category name"],
-    unique: true,
+    unique: [true, "Category must be unique"],
     trim: true,
-    enum: {
-      values: Object.keys(predefinedCategories),
-      message: "{VALUE} is not a valid category",
-    },
   },
 });
 

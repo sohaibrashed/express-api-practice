@@ -171,6 +171,19 @@ exports.createCategory = exceptionHandler(async (req, res) => {
   });
 });
 
+exports.getCategories = exceptionHandler(async (req, res) => {
+  const allCategories = await Category.find({});
+
+  if (allCategories.length === 0) {
+    throw new Error("Unable to fetch all categories");
+  }
+
+  res.status(200).json({
+    status: "success",
+    data: allCategories,
+  });
+});
+
 exports.createSubCategory = exceptionHandler(async (req, res) => {
   const { name, category } = req.body;
 
@@ -192,5 +205,21 @@ exports.createSubCategory = exceptionHandler(async (req, res) => {
   res.status(201).json({
     status: "success",
     data: newSubCategory,
+  });
+});
+
+exports.getSubCategories = exceptionHandler(async (req, res) => {
+  const allSubCategories = await SubCategory.find({}).populate(
+    "category",
+    "_id name"
+  );
+
+  if (allSubCategories.length === 0) {
+    throw new Error("Unable to fetch all sub-categories");
+  }
+
+  res.status(200).json({
+    status: "success",
+    data: allSubCategories,
   });
 });
