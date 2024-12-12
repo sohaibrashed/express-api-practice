@@ -123,15 +123,64 @@ exports.deleteOne = exceptionHandler(async (req, res, next) => {
 });
 
 exports.updateOne = exceptionHandler(async (req, res, next) => {
-  const id = req.params.id;
-  const updatedProduct = await Product.findByIdAndUpdate(id, req.body, {
-    runValidators: true,
-  });
+  const { id } = req.params;
+  const {
+    name,
+    description,
+    price,
+    category,
+    subCategory,
+    size,
+    color,
+    material,
+    stock,
+    ratings,
+    tags,
+    brand,
+    images,
+  } = req.body;
+  const validCategory = await Category.findOne({ name: category });
+  const validSubCategory = await SubCategory.findOne({ name: subCategory });
+
+  if (!validCategory) {
+    const error = new Error("Invalid category ID");
+    error.statusCode = 400;
+    throw error;
+  }
+
+  if (
+    !validSubCategory ||
+    validSubCategory.category.toString() !== validCategory._id.toString()
+  ) {
+    const error = new Error(
+      "Invalid sub-category ID or it does not match the category"
+    );
+    error.statusCode = 400;
+    throw error;
+  }
+
+  const updatedProduct = await Product.findByIdAndUpdate(
+    id,
+    {
+      name,
+      description,
+      price,
+      category: validCategory._id,
+      subCategory: validSubCategory._id,
+      size,
+      color,
+      material,
+      stock,
+      ratings,
+      tags,
+      brand,
+      images,
+    },
+    { runValidators: true, new: true }
+  );
 
   if (!updatedProduct) {
-    const error = new Error(`product with this ID: ${id} doesn't exist`);
-    error.statusCode = 404;
-    throw error;
+    throw new Error("Product could not be created");
   }
 
   res.status(200).json({
