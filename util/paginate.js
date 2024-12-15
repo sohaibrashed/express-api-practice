@@ -1,11 +1,20 @@
-const paginate = async (model, queryParams, populateFields = []) => {
+const paginate = async (
+  model,
+  queryParams,
+  sortOrder = {},
+  populateFields = []
+) => {
   const { page = 1, limit = process.env.LIMIT || 10, ...filters } = queryParams;
 
   const currentPage = Math.max(1, parseInt(page));
   const itemsPerPage = Math.max(1, parseInt(limit));
   const skip = (currentPage - 1) * itemsPerPage;
 
-  let query = model.find(filters).skip(skip).limit(itemsPerPage);
+  let query = model
+    .find(filters)
+    .sort(sortOrder)
+    .skip(skip)
+    .limit(itemsPerPage);
 
   if (populateFields.length > 0) {
     populateFields.forEach((field) => {

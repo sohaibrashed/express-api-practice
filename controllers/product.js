@@ -5,13 +5,69 @@ const paginate = require("../util/paginate");
 const exceptionHandler = require("../middlewares/exceptionHandler");
 
 exports.getAll = exceptionHandler(async (req, res, next) => {
-  const { data, pagination } = await paginate(Product, req.query, [
+  const {
+    page,
+    category,
+    subCategory,
+    priceMin,
+    priceMax,
+    search,
+    sort,
+    size,
+    ratings,
+    stock,
+  } = req.query;
+
+  const filter = {};
+
+  if (page) filter.page = page;
+
+  if (category) filter.category = category;
+  if (subCategory) filter.subCategory = subCategory;
+
+  if (priceMin) filter.price = { ...filter.price, $gte: parseFloat(priceMin) };
+  if (priceMax) filter.price = { ...filter.price, $lte: parseFloat(priceMax) };
+
+  if (size) filter.size = size;
+
+  if (ratings) filter.ratings = { $gte: parseInt(ratings) };
+
+  if (stock === "in") filter.stock = { $gt: 0 };
+  if (stock === "out") filter.stock = 0;
+
+  if (search) filter.name = { $regex: search, $options: "i" };
+
+  let sortOrder = {};
+  switch (sort) {
+    case "a-z":
+      sortOrder = { name: 1 };
+      break;
+    case "z-a":
+      sortOrder = { name: -1 };
+      break;
+    case "low-high":
+      sortOrder = { price: 1 };
+      break;
+    case "high-low":
+      sortOrder = { price: -1 };
+      break;
+    case "old-new":
+      sortOrder = { createdAt: 1 };
+      break;
+    case "new-old":
+      sortOrder = { createdAt: -1 };
+      break;
+    default:
+      sortOrder = { createdAt: -1 };
+  }
+
+  const { data, pagination } = await paginate(Product, filter, sortOrder, [
     { path: "category", select: "name" },
     { path: "subCategory", select: "name" },
   ]);
 
   if (!data) {
-    const error = new Error("products doesn't exist");
+    const error = new Error("No products found");
     error.statusCode = 400;
     throw error;
   }

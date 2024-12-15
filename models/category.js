@@ -6,6 +6,7 @@ const categorySchema = new mongoose.Schema({
     required: [true, "Please provide the category name"],
     unique: [true, "Category must be unique"],
     trim: true,
+    lowercase: true,
   },
 });
 

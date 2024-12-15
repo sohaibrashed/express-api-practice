@@ -5,6 +5,7 @@ const subCategorySchema = new mongoose.Schema({
     type: String,
     required: [true, "Please provide the sub-category name"],
     trim: true,
+    lowercase: true,
   },
   category: {
     type: mongoose.Schema.Types.ObjectId,
