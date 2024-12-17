@@ -3,12 +3,14 @@ const { generateToken } = require("../util/generateToken");
 const exceptionHandler = require("../middlewares/exceptionHandler");
 
 exports.signup = exceptionHandler(async (req, res, next) => {
-  const { name, email, password, role } = req.body;
+  const { name, email, password, role, phone } = req.body;
   const newUser = await User.create({
     name,
     email,
     password,
     role,
+    phone,
+    isActive: true,
   });
 
   if (!newUser) {
@@ -30,6 +32,8 @@ exports.signin = exceptionHandler(async (req, res) => {
   const { email, password } = req.body;
 
   const user = await User.findOne({ email }).select("+password");
+
+  await User.findByIdAndUpdate(user._id, { isActive: true });
 
   if (user && (await user.matchPassword(password))) {
     const token = generateToken(res, user._id);

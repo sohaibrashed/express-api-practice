@@ -3,9 +3,9 @@ const paginate = require("../util/paginate");
 const exceptionHandler = require("../middlewares/exceptionHandler");
 
 exports.create = exceptionHandler(async (req, res) => {
-  const { name, email, password, role } = req.body;
+  const { name, email, password, role, phone } = req.body;
 
-  const newUser = await User.create({ name, email, password, role });
+  const newUser = await User.create({ name, email, password, role, phone });
 
   if (!newUser) {
     const error = new Error("user NOT created!");
