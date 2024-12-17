@@ -12,6 +12,7 @@ const userRouter = require("./routes/user");
 const productRouter = require("./routes/product");
 const orderRouter = require("./routes/order");
 const dashboardRouter = require("./routes/dashboard");
+const otpRouter = require("./routes/OTP");
 
 const { errorHandler } = require("./middlewares/errorHandler");
 
@@ -42,6 +43,7 @@ app.use("/api/v1/users", userRouter);
 app.use("/api/v1/products", productRouter);
 app.use("/api/v1/orders", orderRouter);
 app.use("/api/v1/dashboard", dashboardRouter);
+app.use("/api/v1/otp", otpRouter);
 
 app.all("*", (req, res, next) => {
   next(new Error(`this ${req.path} URL, NOT FOUND`));

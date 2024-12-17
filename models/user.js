@@ -8,7 +8,7 @@ const userSchema = new mongoose.Schema(
       type: String,
       trim: true,
       required: [true, "Please provide your name"],
-      maxlength: [80, "Name cannot exceed 50 characters"],
+      maxlength: [80, "Name cannot exceed 80 characters"],
     },
     email: {
       type: String,
@@ -20,7 +20,7 @@ const userSchema = new mongoose.Schema(
     },
     password: {
       type: String,
-      required: [true, "Please provide password (min 8 length)"],
+      required: [true, "Please provide password (min 6 length)"],
       minlength: 6,
       select: false,
     },
@@ -30,6 +30,62 @@ const userSchema = new mongoose.Schema(
       trim: true,
       enum: ["user", "admin", "owner"],
       default: "user",
+    },
+    image: {
+      type: String,
+      validate: {
+        validator: function (value) {
+          return validate.isURL(value);
+        },
+        message: "Image URL {VALUE} is not valid",
+      },
+    },
+    verificationToken: String,
+    resetToken: String,
+    resetTokenExpiration: Date,
+    phone: {
+      type: String,
+      required: [true, "Phone number is required."],
+      validate: {
+        validator: function (value) {
+          return validate.isMobilePhone(value);
+        },
+        message: "Invalid phone number format.",
+      },
+    },
+    emailVerified: {
+      type: Boolean,
+      default: false,
+    },
+    phoneVerified: {
+      type: Boolean,
+      default: false,
+    },
+    addresses: [
+      {
+        fullName: { type: String, required: true },
+        address: { type: String, required: true },
+        city: { type: String, required: true },
+        country: { type: String, required: true },
+        postalCode: {
+          type: String,
+          required: true,
+          validate: {
+            validator: function (value) {
+              return validate.isPostalCode(value, "any");
+            },
+            message: "Invalid postal code format.",
+          },
+        },
+      },
+    ],
+    lastLoginAt: {
+      type: Date,
+      default: Date.now,
+    },
+    isActive: {
+      type: Boolean,
+      default: false,
     },
   },
   { timestamps: true }
@@ -41,12 +97,16 @@ userSchema.methods.matchPassword = async function (enteredPassword) {
 
 userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) {
-    next();
+    return next();
   }
-
   const salt = await bcrypt.genSalt(10);
   this.password = await bcrypt.hash(this.password, salt);
 });
+
+userSchema.index({ email: 1 });
+userSchema.index({ role: 1 });
+
+userSchema.index({ resetTokenExpiration: 1 }, { expireAfterSeconds: 300 });
 
 const User = mongoose.model("User", userSchema);
 

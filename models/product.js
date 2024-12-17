@@ -61,10 +61,6 @@ const productSchema = new mongoose.Schema(
         trim: true,
       },
     ],
-    dateAdded: {
-      type: Date,
-      default: Date.now,
-    },
     brand: {
       type: String,
       trim: true,
