@@ -1,5 +1,6 @@
 const User = require("../models/user");
 const jwt = require("jsonwebtoken");
+const AppError = require("../util/appError");
 
 function verifyToken(token) {
   return jwt.verify(token, process.env.JWT_SECRET);
@@ -10,18 +11,14 @@ exports.protect = async (req, res, next) => {
     const token = await req.cookies?.jwt;
 
     if (!token) {
-      const error = new Error("No token found");
-      error.statusCode = 401;
-      throw error;
+      next(new AppError("No token found", 401));
     }
     const decoded = verifyToken(token);
 
     req.user = await User.findById(decoded.id).select("-password");
 
     if (!req.user._id) {
-      const error = new Error("User not Found");
-      error.statusCode = 401;
-      throw error;
+      next(new AppError("No user found", 401));
     }
 
     next();
@@ -39,7 +36,7 @@ exports.checkSignin = async (req, res, next) => {
 
       const user = await User.findById(decoded.id).select("-password");
       if (user) {
-        throw new Error("User already logged in");
+        next(new Error("User already logged in", 400));
       }
     }
     next();
@@ -62,23 +59,17 @@ exports.checkAccess = async (req, res, next) => {
           const checkUser = await User.findById(id);
 
           if (!checkUser) {
-            const error = new Error(`user with this ID: ${id} doesn't exist`);
-            error.statusCode = 401;
-            throw error;
+            next(new AppError(`user with this ID: ${id} doesn't exist`, 404));
           }
 
           if (checkUser.role !== "user") {
-            const error = new Error("Not Authorized");
-            error.statusCode = 401;
-            throw error;
+            next(new AppError("Not Authorized", 401));
           }
         }
       }
       next();
     } else {
-      const error = new Error(`Role: ${req.user.role} is not Authorized`);
-      error.statusCode = 401;
-      throw error;
+      next(new AppError(`Role: ${req.user.role} is not Authorized`, 401));
     }
   } catch (error) {
     next(error);

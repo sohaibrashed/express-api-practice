@@ -47,7 +47,7 @@ reviewSchema.pre("save", function (next) {
   next();
 });
 
-async function updateProductRating(productId) {
+async function updateProductRatings(productId) {
   const result = await this.constructor.aggregate([
     { $match: { product: productId } },
     {
@@ -60,20 +60,20 @@ async function updateProductRating(productId) {
   ]);
 
   await mongoose.model("Product").findByIdAndUpdate(productId, {
-    averageRating: result[0]?.averageRating || 0,
-    reviewCount: result[0]?.reviewCount || 0,
+    "ratings.average": result[0]?.averageRating || 0,
+    "ratings.count": result[0]?.reviewCount || 0,
   });
 }
 
 reviewSchema.post("save", async function () {
-  await updateProductRating(this.product);
+  await updateProductRatings.call(this, this.product);
 });
 
 reviewSchema.post(
   "deleteOne",
   { document: true, query: false },
   async function () {
-    await updateProductRating(this.product);
+    await updateProductRatings.call(this, this.product);
   }
 );
 

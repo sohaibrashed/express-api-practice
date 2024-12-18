@@ -1,75 +1,124 @@
 const Product = require("../models/product");
 const Category = require("../models/category");
 const SubCategory = require("../models/subCategory");
+const Brand = require("../models/brand");
 const paginate = require("../util/paginate");
 const exceptionHandler = require("../middlewares/exceptionHandler");
+const AppError = require("../util/appError");
+const validateObjectId = require("../util/validateObjectId");
 
+async function validateSubCategory(categoryName, subCategoryName) {
+  if (!categoryName || !subCategoryName) {
+    throw new Error("Category and Subcategory names are required");
+  }
+
+  const category = await Category.findOne({ name: categoryName });
+  if (!category) {
+    throw new Error(`Invalid Category: ${categoryName}`);
+  }
+
+  const subCategory = await SubCategory.findOne({
+    name: subCategoryName,
+    category: category._id,
+  });
+
+  if (!subCategory) {
+    throw new Error(
+      `Invalid Subcategory: ${subCategoryName} for category ${categoryName}`
+    );
+  }
+
+  return subCategory._id;
+}
+
+//@desc Get all products
+//@route GET /api/products/
+//@access Public
 exports.getAll = exceptionHandler(async (req, res, next) => {
   const {
-    page,
+    page = 1,
+    limit = 10,
     category,
     subCategory,
+    brand,
     priceMin,
     priceMax,
     search,
     sort,
     size,
-    ratings,
-    stock,
+    color,
+    gender,
+    seasonality,
+    minRating,
+    inStock,
   } = req.query;
 
   const filter = {};
 
-  if (page) filter.page = page;
+  if (category) filter.category = await validateObjectId(Category, category);
+  if (subCategory)
+    filter.subCategory = await validateObjectId(SubCategory, subCategory);
+  if (brand) filter.brand = await validateObjectId(Brand, brand);
 
-  if (category) filter.category = category;
-  if (subCategory) filter.subCategory = subCategory;
-
-  if (priceMin) filter.price = { ...filter.price, $gte: parseFloat(priceMin) };
-  if (priceMax) filter.price = { ...filter.price, $lte: parseFloat(priceMax) };
-
-  if (size) filter.size = size;
-
-  if (ratings) filter.ratings = { $gte: parseInt(ratings) };
-
-  if (stock === "in") filter.stock = { $gt: 0 };
-  if (stock === "out") filter.stock = 0;
-
-  if (search) filter.name = { $regex: search, $options: "i" };
-
-  let sortOrder = {};
-  switch (sort) {
-    case "a-z":
-      sortOrder = { name: 1 };
-      break;
-    case "z-a":
-      sortOrder = { name: -1 };
-      break;
-    case "low-high":
-      sortOrder = { price: 1 };
-      break;
-    case "high-low":
-      sortOrder = { price: -1 };
-      break;
-    case "old-new":
-      sortOrder = { createdAt: 1 };
-      break;
-    case "new-old":
-      sortOrder = { createdAt: -1 };
-      break;
-    default:
-      sortOrder = { createdAt: -1 };
+  if (priceMin || priceMax) {
+    filter["price.base"] = {};
+    if (priceMin) filter["price.base"].$gte = parseFloat(priceMin);
+    if (priceMax) filter["price.base"].$lte = parseFloat(priceMax);
   }
 
-  const { data, pagination } = await paginate(Product, filter, sortOrder, [
-    { path: "category", select: "name" },
-    { path: "subCategory", select: "name" },
-  ]);
+  if (search) {
+    filter.$or = [
+      { name: { $regex: search, $options: "i" } },
+      { tags: { $regex: search, $options: "i" } },
+    ];
+  }
 
-  if (!data) {
-    const error = new Error("No products found");
-    error.statusCode = 400;
-    throw error;
+  if (size || color) {
+    filter.variants = {
+      $elemMatch: {
+        ...(size && { size }),
+        ...(color && { color }),
+      },
+    };
+  }
+
+  if (gender) filter.gender = gender;
+  if (seasonality) filter.seasonality = seasonality;
+  if (minRating) filter["ratings.average"] = { $gte: parseFloat(minRating) };
+
+  if (inStock === "true") {
+    filter.variants = {
+      $elemMatch: { stock: { $gt: 0 } },
+    };
+  }
+
+  const sortOptions = {
+    "price-low-high": { "price.base": 1 },
+    "price-high-low": { "price.base": -1 },
+    "rating-high-low": { "ratings.average": -1 },
+    newest: { createdAt: -1 },
+    oldest: { createdAt: 1 },
+    "a-z": { name: 1 },
+    "z-a": { name: -1 },
+  };
+
+  const sortOrder = sortOptions[sort] || { createdAt: -1 };
+
+  const { data, pagination } = await paginate(
+    Product,
+    filter,
+    sortOrder,
+    [
+      { path: "category", select: "name" },
+      { path: "subCategory", select: "name" },
+      { path: "brand", select: "name" },
+    ],
+    page,
+    limit
+  );
+
+  if (!data || data.length === 0) {
+    next(new AppError("No products found.", 404));
   }
 
   res.status(200).json({
@@ -79,17 +128,19 @@ exports.getAll = exceptionHandler(async (req, res, next) => {
   });
 });
 
+//@desc Get a product
+//@route GET /api/products/:id
+//@access Public
 exports.getOne = exceptionHandler(async (req, res, next) => {
-  const id = req.params.id;
+  const { id } = req.params;
 
   const product = await Product.findById(id)
     .populate("category", "name")
-    .populate("subCategory", "name");
+    .populate("subCategory", "name")
+    .populate("brand", "name logo");
 
   if (!product) {
-    const error = new Error(`product with this ID: ${id} doesn't exist`);
-    error.statusCode = 404;
-    throw error;
+    next(new AppError(`Product with ID: ${id} not found`, 404));
   }
 
   res.status(200).json({
@@ -98,6 +149,9 @@ exports.getOne = exceptionHandler(async (req, res, next) => {
   });
 });
 
+//@desc Create a product
+//@route POST /api/products/
+//@access Private/Admin
 exports.create = exceptionHandler(async (req, res, next) => {
   const {
     name,
@@ -105,55 +159,33 @@ exports.create = exceptionHandler(async (req, res, next) => {
     price,
     category,
     subCategory,
-    size,
-    color,
-    material,
-    stock,
-    ratings,
-    tags,
     brand,
-    images,
+    variants,
+    materials,
+    tags,
+    seasonality,
+    gender,
   } = req.body;
 
-  const validCategory = await Category.findOne({ name: category });
-  const validSubCategory = await SubCategory.findOne({ name: subCategory });
-
-  if (!validCategory) {
-    const error = new Error("Invalid category ID");
-    error.statusCode = 400;
-    throw error;
-  }
-
-  if (
-    !validSubCategory ||
-    validSubCategory.category.toString() !== validCategory._id.toString()
-  ) {
-    const error = new Error(
-      "Invalid sub-category ID or it does not match the category"
-    );
-    error.statusCode = 400;
-    throw error;
-  }
+  const [validCategory, validSubCategory, validBrand] = await Promise.all([
+    validateObjectId(Category, category),
+    validateSubCategory(category, subCategory),
+    validateObjectId(Brand, brand),
+  ]);
 
   const product = await Product.create({
     name,
     description,
     price,
-    category: validCategory._id,
-    subCategory: validSubCategory._id,
-    size,
-    color,
-    material,
-    stock,
-    ratings,
+    category: validCategory,
+    subCategory: validSubCategory,
+    brand: validBrand,
+    variants,
+    materials,
     tags,
-    brand,
-    images,
+    seasonality,
+    gender,
   });
-
-  if (!product) {
-    throw new Error("Product could not be created");
-  }
 
   res.status(201).json({
     status: "success",
@@ -161,170 +193,82 @@ exports.create = exceptionHandler(async (req, res, next) => {
   });
 });
 
+//@desc Delete a product
+//@route DELETE /api/products/:id
+//@access Private/Admin
 exports.deleteOne = exceptionHandler(async (req, res, next) => {
-  const id = req.params.id;
+  const { id } = req.params;
 
-  const deletedProduct = await Product.findByIdAndDelete({ _id: id });
+  const deletedProduct = await Product.findByIdAndDelete(id);
 
   if (!deletedProduct) {
-    const error = new Error(`product with this ID: ${id} doesn't exist`);
-    error.statusCode = 404;
-    throw error;
+    next(new AppError(`Product with ID: ${id} not found`, 404));
   }
 
   res.status(200).json({
     status: "success",
-    deletedProduct,
+    message: "Product successfully deleted",
+    product: deletedProduct,
   });
 });
 
+//@desc Update a product
+//@route PATCH /api/products/:id
+//@access Private/Admin
 exports.updateOne = exceptionHandler(async (req, res, next) => {
   const { id } = req.params;
-  const {
-    name,
-    description,
-    price,
-    category,
-    subCategory,
-    size,
-    color,
-    material,
-    stock,
-    ratings,
-    tags,
-    brand,
-    images,
-  } = req.body;
-  const validCategory = await Category.findOne({ name: category });
-  const validSubCategory = await SubCategory.findOne({ name: subCategory });
+  const updateData = req.body;
 
-  if (!validCategory) {
-    const error = new Error("Invalid category ID");
-    error.statusCode = 400;
-    throw error;
+  if (updateData.category || updateData.subCategory) {
+    const category = updateData.category;
+    const subCategory = updateData.subCategory;
+
+    if (category || subCategory) {
+      await this.validateSubCategory(category, subCategory);
+    }
   }
 
-  if (
-    !validSubCategory ||
-    validSubCategory.category.toString() !== validCategory._id.toString()
-  ) {
-    const error = new Error(
-      "Invalid sub-category ID or it does not match the category"
-    );
-    error.statusCode = 400;
-    throw error;
+  if (updateData.brand) {
+    await this.validateObjectId(Brand, updateData.brand);
   }
 
-  const updatedProduct = await Product.findByIdAndUpdate(
-    id,
-    {
-      name,
-      description,
-      price,
-      category: validCategory._id,
-      subCategory: validSubCategory._id,
-      size,
-      color,
-      material,
-      stock,
-      ratings,
-      tags,
-      brand,
-      images,
-    },
-    { runValidators: true, new: true }
-  );
+  const updatedProduct = await Product.findByIdAndUpdate(id, updateData, {
+    runValidators: true,
+    new: true,
+    context: "query",
+  });
 
   if (!updatedProduct) {
-    throw new Error("Product could not be created");
+    next(new AppError(`Product with ID: ${id} not found`, 404));
   }
 
   res.status(200).json({
     status: "success",
-    updatedProduct,
+    product: updatedProduct,
   });
 });
 
-exports.getTrending = exceptionHandler(async (req, res) => {
-  const trendingProducts = await Product.find({ ratings: { $gte: 4 } })
-    .sort({ ratings: -1, stock: -1 })
-    .limit(process.env.TREND_LIMIT || 10);
+//@desc Get trending products
+//@route GET /api/products/trending
+//@access Public
+exports.getTrending = exceptionHandler(async (req, res, next) => {
+  const limit = 10;
+
+  const trendingProducts = await Product.find({
+    "ratings.average": { $gte: 4 },
+  })
+    .sort({ "ratings.average": -1 })
+    .limit(Number(limit))
+    .populate("category", "name")
+    .populate("brand", "name");
 
   if (trendingProducts.length === 0) {
-    throw new Error("No trending products found");
+    next(new AppError("No trending products found", 404));
   }
 
   res.status(200).json({
     status: "success",
     count: trendingProducts.length,
     products: trendingProducts,
-  });
-});
-
-exports.createCategory = exceptionHandler(async (req, res) => {
-  const { name } = req.body;
-
-  const newCategory = await Category.create({ name });
-
-  if (!newCategory) {
-    throw new Error("Failed to Created a new Category");
-  }
-
-  res.status(201).json({
-    status: "success",
-    data: newCategory,
-  });
-});
-
-exports.getCategories = exceptionHandler(async (req, res) => {
-  const allCategories = await Category.find({});
-
-  if (allCategories.length === 0) {
-    throw new Error("Unable to fetch all categories");
-  }
-
-  res.status(200).json({
-    status: "success",
-    data: allCategories,
-  });
-});
-
-exports.createSubCategory = exceptionHandler(async (req, res) => {
-  const { name, category } = req.body;
-
-  const existingCategory = await Category.findOne({ name: category });
-
-  if (!existingCategory) {
-    throw new Error("Failed to find Category");
-  }
-
-  const newSubCategory = await SubCategory.create({
-    name,
-    category: existingCategory._id,
-  });
-
-  if (!newSubCategory) {
-    throw new Error("Failed to create Sub-Category");
-  }
-
-  res.status(201).json({
-    status: "success",
-    data: newSubCategory,
-  });
-});
-
-exports.getSubCategories = exceptionHandler(async (req, res) => {
-  const allSubCategories = await SubCategory.find({}).populate(
-    "category",
-    "_id name"
-  );
-
-  if (allSubCategories.length === 0) {
-    throw new Error("Unable to fetch all sub-categories");
-  }
-
-  res.status(200).json({
-    status: "success",
-    data: allSubCategories,
   });
 });
