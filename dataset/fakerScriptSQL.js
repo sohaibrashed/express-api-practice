@@ -1,7 +1,7 @@
 const { faker } = require("@faker-js/faker");
 const fs = require("fs");
 
-const nProducts = 20000;
+const nProducts = 1000;
 
 const categories = {
   Clothing: ["Shirts", "Pants", "Jackets", "Sweaters"],

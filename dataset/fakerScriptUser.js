@@ -2,7 +2,7 @@ const { faker } = require("@faker-js/faker");
 const fs = require("fs");
 const validate = require("validator");
 
-const nUsers = 2000;
+const nUsers = 500;
 const users = [];
 
 const createEmailFromName = (name) =>

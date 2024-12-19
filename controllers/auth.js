@@ -3,6 +3,9 @@ const { generateToken } = require("../util/generateToken");
 const exceptionHandler = require("../middlewares/exceptionHandler");
 const AppError = require("../util/appError");
 
+//@desc Create a account
+//@route POST /api/users/signup/
+//@access Public
 exports.signup = exceptionHandler(async (req, res, next) => {
   const { name, email, password, role, phone } = req.body;
   const newUser = await User.create({
@@ -27,6 +30,9 @@ exports.signup = exceptionHandler(async (req, res, next) => {
   });
 });
 
+//@desc Sign in to account
+//@route POST /api/users/signin/
+//@access Public
 exports.signin = exceptionHandler(async (req, res, next) => {
   const { email, password } = req.body;
 
@@ -47,6 +53,9 @@ exports.signin = exceptionHandler(async (req, res, next) => {
   }
 });
 
+//@desc Sign out of account
+//@route POST /api/users/signout/
+//@access Public
 exports.signout = exceptionHandler(async (req, res, next) => {
   res.clearCookie("jwt", { httpOnly: true, secure: true, sameSite: "none" });
 

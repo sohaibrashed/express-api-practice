@@ -1,9 +1,9 @@
 {
 	"info": {
-		"_postman_id": "b567a91e-164b-4707-a781-78692b9ee12c",
+		"_postman_id": "f78def07-e4e9-4a1d-80f0-816fe1907284",
 		"name": "express-api-practice",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "38992041"
+		"_exporter_id": "33240793"
 	},
 	"item": [
 		{
@@ -304,7 +304,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"name\": \"Sleek Jackets\",\r\n  \"description\": \"Our koala-friendly Soap ensures every comfort for your pets\",\r\n  \"price\": 947.89,\r\n  \"category\": \"Clothing\",\r\n  \"subCategory\": \"Jackets\",\r\n  \"size\": \"S\",\r\n  \"color\": \"orchid\",\r\n  \"material\": \"Wool\",\r\n  \"stock\": 52,\r\n  \"ratings\": 4.85,\r\n  \"tags\": [\r\n    \"handover\",\r\n    \"mousse\",\r\n    \"mmm\"\r\n  ],\r\n  \"dateAdded\": {\r\n    \"$date\": \"2024-11-18T10:08:18.655Z\"\r\n  },\r\n  \"brand\": \"Bernhard and Sons\",\r\n  \"images\": [\r\n    \"https://picsum.photos/seed/QfJjq/2960/1384?grayscale&blur=5\",\r\n    \"https://picsum.photos/seed/na7bM5/1688/596?grayscale&blur=6\",\r\n    \"https://picsum.photos/seed/1d6smXf0z6/3271/2135?grayscale&blur=5\"\r\n  ]\r\n}",
+							"raw": "{\r\n    \"name\": \"Single\",\r\n    \"description\": \"Institution fast little current.\",\r\n    \"price\": {\r\n      \"base\": 330.77,\r\n      \"sale\": 232.19,\r\n      \"currency\": \"EUR\"\r\n    },\r\n    \"category\": \"clothes\",\r\n    \"subCategory\": \"tops\",\r\n    \"brand\": \"Gucci\",\r\n    \"variants\": [\r\n      {\r\n        \"size\": \"3XL\",\r\n        \"color\": \"LimeGreen\",\r\n        \"stock\": 20\r\n      },\r\n      {\r\n        \"size\": \"4XL\",\r\n        \"color\": \"SlateBlue\",\r\n        \"stock\": 12\r\n      }\r\n    ],\r\n    \"materials\": [\"above\"],\r\n    \"tags\": [\"article\", \"american\", \"seven\"],\r\n    \"seasonality\": \"Autumn\",\r\n    \"gender\": \"Men\",\r\n    \"ratings\": {\r\n      \"average\": 2.3,\r\n      \"count\": 302\r\n    }\r\n  }",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -349,7 +349,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"title\": \"Amazon Echo Plus\"\r\n}\r\n",
+							"raw": "{\r\n    \"name\": \"Single\",\r\n    \"description\": \"Institution fast little current.\",\r\n    \"price\": {\r\n      \"base\": 330.77,\r\n      \"sale\": 232.19,\r\n      \"currency\": \"USD\"\r\n    },\r\n    \"category\": \"clothes\",\r\n    \"subCategory\": \"tops\",\r\n    \"brand\": \"Gucci\",\r\n    \"variants\": [\r\n      {\r\n        \"size\": \"3XL\",\r\n        \"color\": \"LimeGreen\",\r\n        \"stock\": 20\r\n      },\r\n      {\r\n        \"size\": \"4XL\",\r\n        \"color\": \"SlateBlue\",\r\n        \"stock\": 12\r\n      }\r\n    ],\r\n    \"materials\": [\"above\"],\r\n    \"tags\": [\"article\", \"american\", \"seven\"],\r\n    \"seasonality\": \"Autumn\",\r\n    \"gender\": \"Men\",\r\n    \"ratings\": {\r\n      \"average\": 2.3,\r\n      \"count\": 302\r\n    }\r\n  }",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -766,7 +766,17 @@
 					"name": "getBrand",
 					"request": {
 						"method": "GET",
-						"header": []
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/brand/67642acbd5969d3b2c210a1c",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"brand",
+								"67642acbd5969d3b2c210a1c"
+							]
+						}
 					},
 					"response": []
 				},
@@ -774,7 +784,16 @@
 					"name": "getAllBrands",
 					"request": {
 						"method": "GET",
-						"header": []
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/brand",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"brand"
+							]
+						}
 					},
 					"response": []
 				},
@@ -782,7 +801,17 @@
 					"name": "deleteOne",
 					"request": {
 						"method": "DELETE",
-						"header": []
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/brand/67642acbd5969d3b2c210a1c",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"brand",
+								"67642acbd5969d3b2c210a1c"
+							]
+						}
 					},
 					"response": []
 				},
@@ -790,7 +819,26 @@
 					"name": "updateOne",
 					"request": {
 						"method": "PATCH",
-						"header": []
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"categories\": [\r\n        \"clothes\"\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/brand/67646fcfa1db18286a306316",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"brand",
+								"67646fcfa1db18286a306316"
+							]
+						}
 					},
 					"response": []
 				}

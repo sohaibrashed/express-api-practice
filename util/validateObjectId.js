@@ -1,3 +1,5 @@
+const AppError = require("./appError");
+
 const validateObjectId = async (Model, name) => {
   if (!name) {
     throw new AppError(`${Model.modelName} name is required`, 400);

@@ -21,10 +21,7 @@ if (process.env.NODE_ENV === "test") {
 } else {
   router.route("/trending").get(getTrending);
 
-  router
-    .route("/")
-    .get(getAll)
-    .post(protect, checkAccess, productValidator, checkValidation, create);
+  router.route("/").get(getAll).post(protect, checkAccess, create);
 
   router
     .route("/:id")

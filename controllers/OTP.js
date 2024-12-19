@@ -1,11 +1,15 @@
 const exceptionHandler = require("../middlewares/exceptionHandler");
+const AppError = require("../util/appError");
 const { verifyOTP, sendOTP } = require("../util/OTP");
 
+//@desc Send an otp
+//@route POST /api/otp/send-otp
+//@access Public
 exports.sendingOTP = exceptionHandler(async (req, res) => {
   const { phoneNumber } = req.body;
 
   if (!phoneNumber) {
-    throw new Error("Phone number is required.");
+    return next(new AppError("Phone number is required."));
   }
 
   const result = await sendOTP(phoneNumber);
@@ -17,11 +21,14 @@ exports.sendingOTP = exceptionHandler(async (req, res) => {
   throw new Error(result.message);
 });
 
-exports.verifyingOTP = exceptionHandler(async (req, res) => {
+//@desc verify an otp
+//@route POST /api/otp/verify-otp
+//@access Public
+exports.verifyingOTP = exceptionHandler(async (req, res, next) => {
   const { phoneNumber, otp } = req.body;
 
   if (!phoneNumber || !otp) {
-    throw new Error("Phone number and OTP are required.");
+    return next(new AppError("Phone number and OTP are required."));
   }
 
   const result = await verifyOTP(phoneNumber, otp);

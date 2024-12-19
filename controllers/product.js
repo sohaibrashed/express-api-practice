@@ -226,16 +226,16 @@ exports.updateOne = exceptionHandler(async (req, res, next) => {
   const updateData = req.body;
 
   if (updateData.category || updateData.subCategory) {
-    const category = updateData.category;
-    const subCategory = updateData.subCategory;
+    const { category, subCategory } = updateData;
 
-    if (category || subCategory) {
+    if (category && subCategory) {
       await validateSubCategory(category, subCategory);
     }
   }
 
   if (updateData.brand) {
-    await validateObjectId(Brand, updateData.brand);
+    const isValid = await validateObjectId(Brand, updateData.brand);
+    if (!isValid) throw new AppError("Invalid Brand ID", 400);
   }
 
   const updatedProduct = await Product.findByIdAndUpdate(id, updateData, {

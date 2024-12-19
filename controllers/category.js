@@ -4,6 +4,9 @@ const SubCategory = require("../models/subCategory");
 const exceptionHandler = require("../middlewares/exceptionHandler");
 const AppError = require("../util/appError");
 
+//@desc Create a category
+//@route POST /api/category/
+//@access Private/Admin
 exports.createCategory = exceptionHandler(async (req, res, next) => {
   const { name } = req.body;
 
@@ -19,6 +22,9 @@ exports.createCategory = exceptionHandler(async (req, res, next) => {
   });
 });
 
+//@desc Get all categories
+//@route GET /api/category/
+//@access Private/Admin
 exports.getCategories = exceptionHandler(async (req, res, next) => {
   const allCategories = await Category.find({});
 
@@ -32,6 +38,9 @@ exports.getCategories = exceptionHandler(async (req, res, next) => {
   });
 });
 
+//@desc Create a sub-category
+//@route POST /api/category/subcategory
+//@access Private/Admin
 exports.createSubCategory = exceptionHandler(async (req, res, next) => {
   const { name, category } = req.body;
 
@@ -56,6 +65,9 @@ exports.createSubCategory = exceptionHandler(async (req, res, next) => {
   });
 });
 
+//@desc Get all sub-category
+//@route POST /api/category/subcategory
+//@access Private/Admin
 exports.getSubCategories = exceptionHandler(async (req, res, next) => {
   const allSubCategories = await SubCategory.find({}).populate(
     "category",

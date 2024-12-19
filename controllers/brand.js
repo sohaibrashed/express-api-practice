@@ -88,29 +88,43 @@ exports.updateOne = exceptionHandler(async (req, res, next) => {
   const {
     name,
     logo,
-    contactInfo: { website, email, socialMedia: { instagram, facebook } } = {},
+    contactInfo: {
+      website,
+      email,
+      socialMedia: { instagram, facebook } = {},
+    } = {},
     categories,
     status,
   } = req.body;
 
-  const validCategories = await Promise.all(
-    categories.map(async (name) => await validateObjectId(Category, name))
-  );
+  const brandData = {};
 
-  const brandData = {
-    name,
-    logo,
-    contactInfo: {
-      website,
-      email,
-      socialMedia: {
-        instagram,
-        facebook,
-      },
-    },
-    categories: validCategories,
-    status,
-  };
+  if (name !== undefined) brandData.name = name;
+  if (logo !== undefined) brandData.logo = logo;
+  if (status !== undefined) brandData.status = status;
+
+  if (categories !== undefined) {
+    const validCategories = await Promise.all(
+      categories.map(async (name) => await validateObjectId(Category, name))
+    );
+    brandData.categories = validCategories;
+  }
+
+  if (website || email || instagram || facebook) {
+    brandData.contactInfo = {};
+
+    if (website !== undefined) brandData.contactInfo.website = website;
+    if (email !== undefined) brandData.contactInfo.email = email;
+
+    if (instagram || facebook) {
+      brandData.contactInfo.socialMedia = {};
+
+      if (instagram !== undefined)
+        brandData.contactInfo.socialMedia.instagram = instagram;
+      if (facebook !== undefined)
+        brandData.contactInfo.socialMedia.facebook = facebook;
+    }
+  }
 
   const updatedBrand = await Brand.findByIdAndUpdate(id, brandData, {
     new: true,
