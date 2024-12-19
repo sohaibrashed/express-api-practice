@@ -1,6 +1,7 @@
 const User = require("../models/user");
 const { generateToken } = require("../util/generateToken");
 const exceptionHandler = require("../middlewares/exceptionHandler");
+const AppError = require("../util/appError");
 
 exports.signup = exceptionHandler(async (req, res, next) => {
   const { name, email, password, role, phone } = req.body;
@@ -14,9 +15,7 @@ exports.signup = exceptionHandler(async (req, res, next) => {
   });
 
   if (!newUser) {
-    const error = new Error("Something went wrong with signup");
-    error.statusCode = 400;
-    throw error;
+    return next(new AppError("Something went wrong with signup", 400));
   }
 
   const token = generateToken(res, newUser._id);
@@ -28,15 +27,15 @@ exports.signup = exceptionHandler(async (req, res, next) => {
   });
 });
 
-exports.signin = exceptionHandler(async (req, res) => {
+exports.signin = exceptionHandler(async (req, res, next) => {
   const { email, password } = req.body;
 
   const user = await User.findOne({ email }).select("+password");
 
-  await User.findByIdAndUpdate(user._id, { isActive: true });
-
   if (user && (await user.matchPassword(password))) {
     const token = generateToken(res, user._id);
+
+    await User.findByIdAndUpdate(user._id, { isActive: true });
 
     res.status(200).json({
       status: "success",
@@ -44,9 +43,7 @@ exports.signin = exceptionHandler(async (req, res) => {
       data: user,
     });
   } else {
-    const error = new Error("Invalid email or password");
-    error.statusCode = 400;
-    throw error;
+    return next(new AppError("Invalid email or password", 400));
   }
 });
 
@@ -55,6 +52,6 @@ exports.signout = exceptionHandler(async (req, res, next) => {
 
   res.status(200).json({
     status: "success",
-    message: "user signout successfull",
+    message: "user signed out successfully",
   });
 });

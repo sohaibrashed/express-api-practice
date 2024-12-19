@@ -1,46 +1,24 @@
-const Brand = require("../models/brand");
-const AppError = require("../util/appError");
-const exceptionHandler = require("../middlewares/exceptionHandler");
+const express = require("express");
+const router = express.Router();
 
-//@desc Get All Brands
-//@route GET /api/brand/
-//@access Private/Admin
-exports.getAll = exceptionHandler(async (req, res, next) => {
-  const storedBrands = await Brand.find();
+const { protect, checkAccess } = require("../middlewares/auth");
+const {
+  getAll,
+  getById,
+  create,
+  updateOne,
+  deleteOne,
+} = require("../controllers/brand");
 
-  if (storedBrands.length === 0) {
-    next(new AppError("No brands found", 404));
-  }
+router
+  .route("/:id")
+  .get(protect, checkAccess, getById)
+  .patch(protect, checkAccess, updateOne)
+  .delete(protect, checkAccess, deleteOne);
 
-  res.status(200).json({
-    status: "success",
-    data: storedBrands,
-  });
-});
+router
+  .route("/")
+  .get(protect, checkAccess, getAll)
+  .post(protect, checkAccess, create);
 
-//@desc Create a Brand
-//@route POST /api/brand/
-//@access Private/Admin
-exports.create = exceptionHandler(async (req, res, next) => {
-  const {
-    name,
-    logo,
-    website,
-    email,
-    instagram,
-    facebook,
-    categories,
-    status,
-  } = req.body;
-
-  const createdBrand = await Brand.create();
-
-  if (createdBrand) {
-    next(new AppError("Unable to create the brand", 400));
-  }
-
-  res.status(201).json({
-    status: "success",
-    data: createdBrand,
-  });
-});
+module.exports = router;

@@ -18,7 +18,7 @@ if (
 const connectDB = async () => {
   try {
     const conn = await mongoose.connect(DB);
-    console.log(`MongoDB connected sucessfully on: ${conn.connection.host}`);
+    console.log(`MongoDB connected successfully on: ${conn.connection.host}`);
   } catch (error) {
     console.error("DB connection failed, error message: " + error.message);
     process.exit(1);

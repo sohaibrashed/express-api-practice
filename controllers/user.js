@@ -1,49 +1,46 @@
 const User = require("../models/user");
 const paginate = require("../util/paginate");
+const AppError = require("../util/appError");
 const exceptionHandler = require("../middlewares/exceptionHandler");
 
-exports.create = exceptionHandler(async (req, res) => {
+exports.create = exceptionHandler(async (req, res, next) => {
   const { name, email, password, role, phone } = req.body;
 
   const newUser = await User.create({ name, email, password, role, phone });
 
   if (!newUser) {
-    const error = new Error("user NOT created!");
-    error.statusCode = 400;
-    throw error;
+    return next(
+      new AppError("Something went wrong while creating the user", 400)
+    );
   }
 
   res.status(201).json({
     status: "success",
-    data: newUser,
+    user: newUser,
   });
 });
 
-exports.getAll = exceptionHandler(async (req, res) => {
+exports.getAll = exceptionHandler(async (req, res, next) => {
   const { data, pagination } = await paginate(User, req.query);
 
   if (!data) {
-    const error = new Error("users data not found");
-    error.statusCode = 404;
-    throw error;
+    return next(new AppError("No users found", 404));
   }
 
   res.status(200).json({
     status: "success",
     pagination,
-    data,
+    users: data,
   });
 });
 
-exports.getOne = exceptionHandler(async (req, res) => {
-  const id = req.params.id;
+exports.getOne = exceptionHandler(async (req, res, next) => {
+  const { id } = req.params;
 
   const user = await User.findById(id);
 
   if (!user) {
-    const error = new Error(`user with this ID: ${id} doesn't exist`);
-    error.statusCode = 404;
-    throw error;
+    return next(new AppError(`user with this ID: ${id} doesn't exist`, 404));
   }
 
   res.status(200).json({
@@ -52,37 +49,34 @@ exports.getOne = exceptionHandler(async (req, res) => {
   });
 });
 
-exports.deleteOne = exceptionHandler(async (req, res) => {
-  const id = req.params.id;
+exports.deleteOne = exceptionHandler(async (req, res, next) => {
+  const { id } = req.params;
 
   const deletedUser = await User.findByIdAndDelete({ _id: id });
 
   if (!deletedUser) {
-    const error = new Error(`user with this ID: ${id} doesn't exist`);
-    error.statusCode = 404;
-    throw error;
+    return next(new AppError(`user with this ID: ${id} doesn't exist`, 404));
   }
 
   res.status(200).json({
     status: "success",
-    deletedUser,
+    user: deletedUser,
   });
 });
 
-exports.updateOne = exceptionHandler(async (req, res) => {
-  const id = req.params.id;
+exports.updateOne = exceptionHandler(async (req, res, next) => {
+  const { id } = req.params;
   const updatedUser = await User.findByIdAndUpdate(id, req.body, {
     runValidators: true,
+    new: true,
   });
 
   if (!updatedUser) {
-    const error = new Error(`user with this ID: ${id} doesn't exist`);
-    error.statusCode = 404;
-    throw error;
+    return next(new AppError(`user with this ID: ${id} doesn't exist`, 404));
   }
 
   res.status(200).json({
     status: "success",
-    updatedUser,
+    user: updatedUser,
   });
 });

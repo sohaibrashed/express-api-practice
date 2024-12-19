@@ -24,7 +24,7 @@ if (process.env.NODE_ENV === "test") {
   router
     .route("/")
     .get(protect, checkAccess, getAll)
-    .post(protect, checkAccess, userValidator, checkValidation, create);
+    .post(protect, checkAccess, create);
 
   router.route("/signup").post(checkSignin, signup);
   router.route("/signin").post(checkSignin, signin);

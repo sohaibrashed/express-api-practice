@@ -10,7 +10,7 @@ exports.createCategory = exceptionHandler(async (req, res, next) => {
   const newCategory = await Category.create({ name });
 
   if (!newCategory) {
-    next(new AppError("Failed to Created a new Category", 400));
+    return next(new AppError("Failed to Created a new Category", 400));
   }
 
   res.status(201).json({
@@ -23,7 +23,7 @@ exports.getCategories = exceptionHandler(async (req, res, next) => {
   const allCategories = await Category.find({});
 
   if (allCategories.length === 0) {
-    next(new AppError("Categories not found", 404));
+    return next(new AppError("Categories not found", 404));
   }
 
   res.status(200).json({
@@ -38,7 +38,7 @@ exports.createSubCategory = exceptionHandler(async (req, res, next) => {
   const existingCategory = await Category.findOne({ name: category });
 
   if (!existingCategory) {
-    next(new AppError("Failed to find Category", 404));
+    return next(new AppError("Failed to find Category", 404));
   }
 
   const newSubCategory = await SubCategory.create({
@@ -47,7 +47,7 @@ exports.createSubCategory = exceptionHandler(async (req, res, next) => {
   });
 
   if (!newSubCategory) {
-    next(new AppError("Failed to create Sub-Category", 400));
+    return next(new AppError("Failed to create Sub-Category", 400));
   }
 
   res.status(201).json({
@@ -63,7 +63,7 @@ exports.getSubCategories = exceptionHandler(async (req, res, next) => {
   );
 
   if (allSubCategories.length === 0) {
-    next(new AppError("Sub-Categories not found", 404));
+    return next(new AppError("Sub-Categories not found", 404));
   }
 
   res.status(200).json({

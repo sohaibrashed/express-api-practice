@@ -1,66 +1,14 @@
 {
 	"info": {
-		"_postman_id": "3705c438-b1ad-4da9-bb3a-b9920c9edb65",
+		"_postman_id": "b567a91e-164b-4707-a781-78692b9ee12c",
 		"name": "express-api-practice",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "33240793"
+		"_exporter_id": "38992041"
 	},
 	"item": [
 		{
-			"name": "users",
+			"name": "auth",
 			"item": [
-				{
-					"name": "getAll",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{baseUrl}}/users",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"users"
-							],
-							"query": [
-								{
-									"key": "role",
-									"value": "admin",
-									"disabled": true
-								},
-								{
-									"key": "role",
-									"value": "user",
-									"disabled": true
-								},
-								{
-									"key": "limit",
-									"value": "50",
-									"disabled": true
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "getOne",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{baseUrl}}/users/{{user-id}}",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"users",
-								"{{user-id}}"
-							]
-						}
-					},
-					"response": []
-				},
 				{
 					"name": "signup",
 					"request": {
@@ -132,6 +80,63 @@
 						}
 					},
 					"response": []
+				}
+			]
+		},
+		{
+			"name": "users",
+			"item": [
+				{
+					"name": "getAll",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/users",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users"
+							],
+							"query": [
+								{
+									"key": "role",
+									"value": "admin",
+									"disabled": true
+								},
+								{
+									"key": "role",
+									"value": "user",
+									"disabled": true
+								},
+								{
+									"key": "limit",
+									"value": "50",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getOne",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/users/{{user-id}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								"{{user-id}}"
+							]
+						}
+					},
+					"response": []
 				},
 				{
 					"name": "deleteOne",
@@ -158,7 +163,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"email\": \"sohaib@gmail.com\",\r\n    \"password\": \"123456\"\r\n}",
+							"raw": "{\r\n    \"name\": \"Zeeshan Gujjar\",\r\n    \"email\": \"zeeshan@gmail.com\",\r\n    \"password\": \"password\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -185,7 +190,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"email\": \"user7@test.com\",\r\n    \"password\": \"12345678\"\r\n}",
+							"raw": "{\r\n    \"name\": \"User 5\",\r\n    \"email\": \"user5@test.com\",\r\n    \"password\": \"password\",\r\n    \"phone\": \"123456789\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -585,12 +590,11 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{baseUrl}}/products/category",
+							"raw": "{{baseUrl}}/category",
 							"host": [
 								"{{baseUrl}}"
 							],
 							"path": [
-								"products",
 								"category"
 							]
 						}
@@ -603,12 +607,12 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{baseUrl}}/products/subcategory",
+							"raw": "{{baseUrl}}/category/subcategory",
 							"host": [
 								"{{baseUrl}}"
 							],
 							"path": [
-								"products",
+								"category",
 								"subcategory"
 							]
 						}
@@ -622,7 +626,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"Electronics\"\r\n}",
+							"raw": "{\r\n    \"name\": \"Clothes\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -630,12 +634,11 @@
 							}
 						},
 						"url": {
-							"raw": "{{baseUrl}}/products/category",
+							"raw": "{{baseUrl}}/category",
 							"host": [
 								"{{baseUrl}}"
 							],
 							"path": [
-								"products",
 								"category"
 							]
 						}
@@ -649,7 +652,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"Laptops\",\r\n    \"category\": \"Electronics\"\r\n}",
+							"raw": "{\r\n    \"name\": \"Tops\",\r\n    \"category\": \"Clothes\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -657,12 +660,12 @@
 							}
 						},
 						"url": {
-							"raw": "{{baseUrl}}/products/subcategory",
+							"raw": "{{baseUrl}}/category/subcategory",
 							"host": [
 								"{{baseUrl}}"
 							],
 							"path": [
-								"products",
+								"category",
 								"subcategory"
 							]
 						}
@@ -681,7 +684,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"phoneNumber\":\"+923200007077\"\r\n}",
+							"raw": "{\r\n    \"phoneNumber\":\"+923164617819\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -708,7 +711,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"phoneNumber\":\"+923200007077\",\r\n    \"otp\":\"586342\"\r\n}",
+							"raw": "{\r\n    \"phoneNumber\":\"+923200007077\",\r\n    \"otp\":\"698041\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -725,6 +728,69 @@
 								"verify-otp"
 							]
 						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "brand",
+			"item": [
+				{
+					"name": "create",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Gucci\",\r\n    \"contactInfo\": {\r\n        \"website\": \"www.gucci.com\",\r\n        \"email\": \"gucci@gmail.com\",\r\n        \"socialMedia\": {\r\n            \"instagram\": \"www.instagram.com\",\r\n            \"facebook\": \"www.facebook.com\"\r\n        }\r\n    },\r\n    \"categories\": [\r\n        \"clothes\"\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/brand",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"brand"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getBrand",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "getAllBrands",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "deleteOne",
+					"request": {
+						"method": "DELETE",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "updateOne",
+					"request": {
+						"method": "PATCH",
+						"header": []
 					},
 					"response": []
 				}

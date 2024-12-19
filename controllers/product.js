@@ -118,7 +118,7 @@ exports.getAll = exceptionHandler(async (req, res, next) => {
   );
 
   if (!data || data.length === 0) {
-    next(new AppError("No products found.", 404));
+    return next(new AppError("No products found.", 404));
   }
 
   res.status(200).json({
@@ -140,7 +140,7 @@ exports.getOne = exceptionHandler(async (req, res, next) => {
     .populate("brand", "name logo");
 
   if (!product) {
-    next(new AppError(`Product with ID: ${id} not found`, 404));
+    return next(new AppError(`Product with ID: ${id} not found`, 404));
   }
 
   res.status(200).json({
@@ -187,6 +187,12 @@ exports.create = exceptionHandler(async (req, res, next) => {
     gender,
   });
 
+  if (!product) {
+    return next(
+      new AppError("Something went wrong while creating the product", 400)
+    );
+  }
+
   res.status(201).json({
     status: "success",
     product,
@@ -202,7 +208,7 @@ exports.deleteOne = exceptionHandler(async (req, res, next) => {
   const deletedProduct = await Product.findByIdAndDelete(id);
 
   if (!deletedProduct) {
-    next(new AppError(`Product with ID: ${id} not found`, 404));
+    return next(new AppError(`Product with ID: ${id} not found`, 404));
   }
 
   res.status(200).json({
@@ -224,12 +230,12 @@ exports.updateOne = exceptionHandler(async (req, res, next) => {
     const subCategory = updateData.subCategory;
 
     if (category || subCategory) {
-      await this.validateSubCategory(category, subCategory);
+      await validateSubCategory(category, subCategory);
     }
   }
 
   if (updateData.brand) {
-    await this.validateObjectId(Brand, updateData.brand);
+    await validateObjectId(Brand, updateData.brand);
   }
 
   const updatedProduct = await Product.findByIdAndUpdate(id, updateData, {
@@ -239,7 +245,7 @@ exports.updateOne = exceptionHandler(async (req, res, next) => {
   });
 
   if (!updatedProduct) {
-    next(new AppError(`Product with ID: ${id} not found`, 404));
+    return next(new AppError(`Product with ID: ${id} not found`, 404));
   }
 
   res.status(200).json({
@@ -263,7 +269,7 @@ exports.getTrending = exceptionHandler(async (req, res, next) => {
     .populate("brand", "name");
 
   if (trendingProducts.length === 0) {
-    next(new AppError("No trending products found", 404));
+    return next(new AppError("No trending products found", 404));
   }
 
   res.status(200).json({

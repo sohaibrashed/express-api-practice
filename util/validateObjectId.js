@@ -1,17 +1,15 @@
-const exceptionHandler = require("../middlewares/exceptionHandler");
-
-const validateObjectId = exceptionHandler(async (Model, name) => {
+const validateObjectId = async (Model, name) => {
   if (!name) {
-    throw new Error(`${Model.modelName} name is required`);
+    throw new AppError(`${Model.modelName} name is required`, 400);
   }
 
   const document = await Model.findOne({ name });
 
   if (!document) {
-    throw new Error(`Invalid ${Model.modelName}: ${name}`);
+    throw new AppError(`Invalid ${Model.modelName} name: ${name}`, 404);
   }
 
   return document._id;
-});
+};
 
 module.exports = validateObjectId;

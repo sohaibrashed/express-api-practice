@@ -12,6 +12,7 @@ const userRouter = require("./routes/user");
 const productRouter = require("./routes/product");
 const orderRouter = require("./routes/order");
 const categoryRouter = require("./routes/category");
+const brandRouter = require("./routes/brand");
 const dashboardRouter = require("./routes/dashboard");
 const otpRouter = require("./routes/OTP");
 
@@ -44,6 +45,7 @@ app.use("/api/v1/users", userRouter);
 app.use("/api/v1/products", productRouter);
 app.use("/api/v1/orders", orderRouter);
 app.use("/api/v1/category", categoryRouter);
+app.use("/api/v1/brand", brandRouter);
 app.use("/api/v1/dashboard", dashboardRouter);
 app.use("/api/v1/otp", otpRouter);
 
