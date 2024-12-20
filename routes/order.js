@@ -12,16 +12,24 @@ const {
 } = require("../controllers/order");
 
 const { orderValidator } = require("../validators/order");
-
 const checkValidation = require("../middlewares/checkValidation");
+
 const { protect, checkAccess } = require("../middlewares/auth");
 const checkObjectId = require("../middlewares/checkObjectId");
+const validateOrderItems = require("../middlewares/validateOrderItems");
+const validateShippingAddress = require("../middlewares/validateShippingAddress");
 const router = express.Router();
 
 router
   .route("/")
   .get(protect, checkAccess, getAll)
-  .post(protect, checkAccess, create);
+  .post(
+    protect,
+    checkAccess,
+    validateShippingAddress,
+    validateOrderItems,
+    create
+  );
 
 router.route("/mine").get(protect, getAllMine);
 

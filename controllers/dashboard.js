@@ -3,6 +3,9 @@ const Product = require("../models/product");
 const Order = require("../models/order");
 const exceptionHandler = require("../middlewares/exceptionHandler");
 
+//@desc Get dashboard data
+//@route GET /api/v1/dashboard/
+//@access Private/Admin
 exports.getDashboardData = exceptionHandler(async (req, res) => {
   const { startDate, endDate } = req.query;
 

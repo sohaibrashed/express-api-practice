@@ -3,6 +3,9 @@ const paginate = require("../util/paginate");
 const AppError = require("../util/appError");
 const exceptionHandler = require("../middlewares/exceptionHandler");
 
+//@desc Create a user
+//@route POST /api/v1/users/
+//@access Private/Admin
 exports.create = exceptionHandler(async (req, res, next) => {
   const { name, email, password, role, phone } = req.body;
 
@@ -20,6 +23,9 @@ exports.create = exceptionHandler(async (req, res, next) => {
   });
 });
 
+//@desc Get all users
+//@route GET /api/v1/users/
+//@access Private/Admin
 exports.getAll = exceptionHandler(async (req, res, next) => {
   const { data, pagination } = await paginate(User, req.query);
 
@@ -34,6 +40,9 @@ exports.getAll = exceptionHandler(async (req, res, next) => {
   });
 });
 
+//@desc Get a user
+//@route Get /api/v1/users/:id
+//@access Private/Admin
 exports.getOne = exceptionHandler(async (req, res, next) => {
   const { id } = req.params;
 
@@ -49,6 +58,9 @@ exports.getOne = exceptionHandler(async (req, res, next) => {
   });
 });
 
+//@desc Delete a user
+//@route DELETE /api/v1/users/:id
+//@access Private/Admin
 exports.deleteOne = exceptionHandler(async (req, res, next) => {
   const { id } = req.params;
 
@@ -64,6 +76,9 @@ exports.deleteOne = exceptionHandler(async (req, res, next) => {
   });
 });
 
+//@desc Update a user
+//@route PATCH /api/v1/users/:id
+//@access Private/Admin
 exports.updateOne = exceptionHandler(async (req, res, next) => {
   const { id } = req.params;
   const updatedUser = await User.findByIdAndUpdate(id, req.body, {

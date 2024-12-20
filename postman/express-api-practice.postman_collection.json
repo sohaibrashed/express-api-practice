@@ -1,9 +1,9 @@
 {
 	"info": {
-		"_postman_id": "f78def07-e4e9-4a1d-80f0-816fe1907284",
+		"_postman_id": "819c0fd7-8cd1-4956-9961-0c28ff9cde0e",
 		"name": "express-api-practice",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "33240793"
+		"_exporter_id": "38992041"
 	},
 	"item": [
 		{
@@ -417,7 +417,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"items\": [\r\n    { \"product\": \"673c2cabd83d0042dabcb0d0\", \"quantity\": 2 },\r\n    { \"product\": \"673c2cacd83d0042dabcb0d6\", \"quantity\": 4 },\r\n    { \"product\": \"673c2cadd83d0042dabcb0e0\", \"quantity\": 5 },\r\n    { \"product\": \"673c2cadd83d0042dabcb0ec\", \"quantity\": 1 }\r\n  ],\r\n  \"paymentMethod\": \"Credit Card\",\r\n  \"shippingAddress\": {\r\n    \"fullName\": \"John Doe\",\r\n    \"address\": \"123 Main St\",\r\n    \"city\": \"New York\",\r\n    \"country\": \"USA\",\r\n    \"postalCode\": \"54000\",\r\n    \"phone\": \"+923201237177\"\r\n  }\r\n}\r\n",
+							"raw": "{\r\n  \"items\": [\r\n    {\r\n      \"_id\": \"676523c84eca25d3e810c2a2\",\r\n      \"size\": \"3XL\",\r\n      \"color\": \"LimeGreen\",\r\n      \"quantity\": 2\r\n    },\r\n    {\r\n      \"_id\": \"676523c44eca25d3e810c299\",\r\n      \"size\": \"4XL\",\r\n      \"color\": \"SlateBlue\",\r\n      \"quantity\": 1\r\n    }\r\n  ],\r\n  \"shippingAddress\": {\r\n    \"fullName\":\"Sohaib Rashed\",\r\n    \"address\": \"123 Main Street\",\r\n    \"city\": \"Lahore\",\r\n    \"country\": \"Pakistan\",\r\n    \"postalCode\": \"54000\",\r\n    \"phone\":\"+923200007077\"\r\n  },\r\n  \"paymentMethod\": \"Credit Card\",\r\n  \"notes\": \"Please leave with doorman if not home\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -442,6 +442,15 @@
 					"request": {
 						"method": "PATCH",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": " {\r\n        \"summary\": {\r\n            \"totalItems\": 3,\r\n            \"uniqueItems\": 2,\r\n            \"averageItemPrice\": 232.19\r\n        },\r\n        \"shippingAddress\": {\r\n            \"fullName\": \"Muhammad Sohaib Rashed\",\r\n            \"address\": \"123 Main Street\",\r\n            \"city\": \"Lahore\",\r\n            \"country\": \"Pakistan\",\r\n            \"postalCode\": \"54000\",\r\n            \"phone\": \"+923200007077\"\r\n        },\r\n        \"_id\": \"67656d37db45d72ef4c2790f\",\r\n        \"user\": {\r\n            \"_id\": \"67650bfe4e144d660bf4d73e\",\r\n            \"name\": \"Sohaib Rashed\",\r\n            \"email\": \"sohaib@gmail.com\",\r\n            \"role\": \"owner\"\r\n        },\r\n        \"items\": [\r\n            {\r\n                \"variant\": {\r\n                    \"size\": \"3XL\",\r\n                    \"color\": \"LimeGreen\"\r\n                },\r\n                \"product\": {\r\n                    \"price\": {\r\n                        \"base\": 330.77,\r\n                        \"sale\": 232.19,\r\n                        \"currency\": \"EUR\"\r\n                    },\r\n                    \"ratings\": {\r\n                        \"average\": 0,\r\n                        \"count\": 0\r\n                    },\r\n                    \"_id\": \"676523c84eca25d3e810c2a2\",\r\n                    \"name\": \"Single\",\r\n                    \"category\": \"67640628f4a4aad47250d68e\",\r\n                    \"subCategory\": \"67640657f4a4aad47250d692\",\r\n                    \"brand\": \"67646fcfa1db18286a306316\",\r\n                    \"variants\": [\r\n                        {\r\n                            \"size\": \"3XL\",\r\n                            \"color\": \"LimeGreen\",\r\n                            \"stock\": 14,\r\n                            \"images\": [],\r\n                            \"_id\": \"676523c84eca25d3e810c2a3\"\r\n                        },\r\n                        {\r\n                            \"size\": \"4XL\",\r\n                            \"color\": \"SlateBlue\",\r\n                            \"stock\": 12,\r\n                            \"images\": [],\r\n                            \"_id\": \"676523c84eca25d3e810c2a4\"\r\n                        }\r\n                    ],\r\n                    \"seasonality\": \"Autumn\",\r\n                    \"gender\": \"Men\",\r\n                    \"isOnSale\": true,\r\n                    \"discountPercentage\": 30,\r\n                    \"id\": \"676523c84eca25d3e810c2a2\"\r\n                },\r\n                \"quantity\": 2,\r\n                \"price\": 232.19,\r\n                \"total\": 464.38,\r\n                \"_id\": \"67656d37db45d72ef4c27910\",\r\n                \"id\": \"67656d37db45d72ef4c27910\"\r\n            },\r\n            {\r\n                \"variant\": {\r\n                    \"size\": \"4XL\",\r\n                    \"color\": \"SlateBlue\"\r\n                },\r\n                \"product\": {\r\n                    \"price\": {\r\n                        \"base\": 330.77,\r\n                        \"sale\": 232.19,\r\n                        \"currency\": \"EUR\"\r\n                    },\r\n                    \"ratings\": {\r\n                        \"average\": 0,\r\n                        \"count\": 0\r\n                    },\r\n                    \"_id\": \"676523c44eca25d3e810c299\",\r\n                    \"name\": \"Single\",\r\n                    \"category\": \"67640628f4a4aad47250d68e\",\r\n                    \"subCategory\": \"67640657f4a4aad47250d692\",\r\n                    \"brand\": \"67646fcfa1db18286a306316\",\r\n                    \"variants\": [\r\n                        {\r\n                            \"size\": \"3XL\",\r\n                            \"color\": \"LimeGreen\",\r\n                            \"stock\": 20,\r\n                            \"images\": [],\r\n                            \"_id\": \"676523c44eca25d3e810c29a\"\r\n                        },\r\n                        {\r\n                            \"size\": \"4XL\",\r\n                            \"color\": \"SlateBlue\",\r\n                            \"stock\": 9,\r\n                            \"images\": [],\r\n                            \"_id\": \"676523c44eca25d3e810c29b\"\r\n                        }\r\n                    ],\r\n                    \"seasonality\": \"Autumn\",\r\n                    \"gender\": \"Men\",\r\n                    \"isOnSale\": true,\r\n                    \"discountPercentage\": 30,\r\n                    \"id\": \"676523c44eca25d3e810c299\"\r\n                },\r\n                \"quantity\": 1,\r\n                \"price\": 232.19,\r\n                \"total\": 232.19,\r\n                \"_id\": \"67656d37db45d72ef4c27911\",\r\n                \"id\": \"67656d37db45d72ef4c27911\"\r\n            }\r\n        ],\r\n        \"totalAmount\": 696.57,\r\n        \"paymentMethod\": \"Credit Card\",\r\n        \"paymentStatus\": \"Pending\",\r\n        \"orderStatus\": \"Pending\",\r\n        \"notes\": \"Please leave with doorman if not home\",\r\n        \"createdBy\": {\r\n            \"_id\": \"67650bfe4e144d660bf4d73e\",\r\n            \"name\": \"Sohaib Rashed\",\r\n            \"email\": \"sohaib@gmail.com\"\r\n        },\r\n        \"createdAt\": \"2024-12-20T13:12:23.735Z\",\r\n        \"updatedAt\": \"2024-12-20T13:12:23.735Z\",\r\n        \"__v\": 0,\r\n        \"id\": \"67656d37db45d72ef4c2790f\"\r\n    }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
 							"raw": "{{baseUrl}}/orders/{{order-id}}",
 							"host": [
@@ -837,6 +846,96 @@
 							"path": [
 								"brand",
 								"67646fcfa1db18286a306316"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "review",
+			"item": [
+				{
+					"name": "getAll",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/review",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"review"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/review",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"review"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getOne",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/review",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"review"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "deleteOne",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/review",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"review"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "updateOne",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/review",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"review"
 							]
 						}
 					},

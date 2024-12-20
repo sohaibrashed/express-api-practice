@@ -9,12 +9,13 @@ const validateObjectId = require("../util/validateObjectId");
 
 async function validateSubCategory(categoryName, subCategoryName) {
   if (!categoryName || !subCategoryName) {
-    throw new Error("Category and Subcategory names are required");
+    throw new AppError("Category and Subcategory names are required");
   }
 
   const category = await Category.findOne({ name: categoryName });
+
   if (!category) {
-    throw new Error(`Invalid Category: ${categoryName}`);
+    throw new AppError(`Invalid Category: ${categoryName}`);
   }
 
   const subCategory = await SubCategory.findOne({
@@ -23,7 +24,7 @@ async function validateSubCategory(categoryName, subCategoryName) {
   });
 
   if (!subCategory) {
-    throw new Error(
+    throw new AppError(
       `Invalid Subcategory: ${subCategoryName} for category ${categoryName}`
     );
   }
@@ -32,7 +33,7 @@ async function validateSubCategory(categoryName, subCategoryName) {
 }
 
 //@desc Get all products
-//@route GET /api/products/
+//@route GET /api/v1/products/
 //@access Public
 exports.getAll = exceptionHandler(async (req, res, next) => {
   const {
@@ -129,7 +130,7 @@ exports.getAll = exceptionHandler(async (req, res, next) => {
 });
 
 //@desc Get a product
-//@route GET /api/products/:id
+//@route GET /api/v1/products/:id
 //@access Public
 exports.getOne = exceptionHandler(async (req, res, next) => {
   const { id } = req.params;
@@ -150,7 +151,7 @@ exports.getOne = exceptionHandler(async (req, res, next) => {
 });
 
 //@desc Create a product
-//@route POST /api/products/
+//@route POST /api/v1/products/
 //@access Private/Admin
 exports.create = exceptionHandler(async (req, res, next) => {
   const {
@@ -200,7 +201,7 @@ exports.create = exceptionHandler(async (req, res, next) => {
 });
 
 //@desc Delete a product
-//@route DELETE /api/products/:id
+//@route DELETE /api/v1/products/:id
 //@access Private/Admin
 exports.deleteOne = exceptionHandler(async (req, res, next) => {
   const { id } = req.params;
@@ -219,24 +220,21 @@ exports.deleteOne = exceptionHandler(async (req, res, next) => {
 });
 
 //@desc Update a product
-//@route PATCH /api/products/:id
+//@route PATCH /api/v1/products/:id
 //@access Private/Admin
 exports.updateOne = exceptionHandler(async (req, res, next) => {
   const { id } = req.params;
   const updateData = req.body;
 
-  if (updateData.category || updateData.subCategory) {
-    const { category, subCategory } = updateData;
+  const [validCategory, validSubCategory, validBrand] = await Promise.all([
+    validateObjectId(Category, updateData.category),
+    validateSubCategory(updateData.category, updateData.subCategory),
+    validateObjectId(Brand, updateData.brand),
+  ]);
 
-    if (category && subCategory) {
-      await validateSubCategory(category, subCategory);
-    }
-  }
-
-  if (updateData.brand) {
-    const isValid = await validateObjectId(Brand, updateData.brand);
-    if (!isValid) throw new AppError("Invalid Brand ID", 400);
-  }
+  updateData.category = validCategory;
+  updateData.subCategory = validSubCategory;
+  updateData.brand = validBrand;
 
   const updatedProduct = await Product.findByIdAndUpdate(id, updateData, {
     runValidators: true,
@@ -255,7 +253,7 @@ exports.updateOne = exceptionHandler(async (req, res, next) => {
 });
 
 //@desc Get trending products
-//@route GET /api/products/trending
+//@route GET /api/v1/products/trending
 //@access Public
 exports.getTrending = exceptionHandler(async (req, res, next) => {
   const limit = 10;

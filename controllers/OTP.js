@@ -3,7 +3,7 @@ const AppError = require("../util/appError");
 const { verifyOTP, sendOTP } = require("../util/OTP");
 
 //@desc Send an otp
-//@route POST /api/otp/send-otp
+//@route POST /api/v1/otp/send-otp
 //@access Public
 exports.sendingOTP = exceptionHandler(async (req, res) => {
   const { phoneNumber } = req.body;
@@ -22,7 +22,7 @@ exports.sendingOTP = exceptionHandler(async (req, res) => {
 });
 
 //@desc verify an otp
-//@route POST /api/otp/verify-otp
+//@route POST /api/v1/otp/verify-otp
 //@access Public
 exports.verifyingOTP = exceptionHandler(async (req, res, next) => {
   const { phoneNumber, otp } = req.body;

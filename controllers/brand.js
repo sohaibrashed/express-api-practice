@@ -5,7 +5,7 @@ const exceptionHandler = require("../middlewares/exceptionHandler");
 const validateObjectId = require("../util/validateObjectId");
 
 //@desc Get All Brands
-//@route GET /api/brand/
+//@route GET /api/v1/brand/
 //@access Private/Admin
 exports.getAll = exceptionHandler(async (req, res, next) => {
   const storedBrands = await Brand.find().populate("categories");
@@ -22,7 +22,7 @@ exports.getAll = exceptionHandler(async (req, res, next) => {
 });
 
 //@desc Get Single Brand
-//@route GET /api/brand/:id
+//@route GET /api/v1/brand/:id
 //@access Private/Admin
 exports.getById = exceptionHandler(async (req, res, next) => {
   const brand = await Brand.findById(req.params.id).populate("categories");
@@ -38,7 +38,7 @@ exports.getById = exceptionHandler(async (req, res, next) => {
 });
 
 //@desc Create a Brand
-//@route POST /api/brand/
+//@route POST /api/v1/brand/
 //@access Private/Admin
 exports.create = exceptionHandler(async (req, res, next) => {
   const {
@@ -81,7 +81,7 @@ exports.create = exceptionHandler(async (req, res, next) => {
 });
 
 //@desc Update a Brand
-//@route PATCH /api/brand/:id
+//@route PATCH /api/v1/brand/:id
 //@access Private/Admin
 exports.updateOne = exceptionHandler(async (req, res, next) => {
   const { id } = req.params;
@@ -142,7 +142,7 @@ exports.updateOne = exceptionHandler(async (req, res, next) => {
 });
 
 //@desc Delete a Brand
-//@route DELETE /api/brand/:id
+//@route DELETE /api/v1/brand/:id
 //@access Private/Admin
 exports.deleteOne = exceptionHandler(async (req, res, next) => {
   const deletedBrand = await Brand.findByIdAndDelete(req.params.id);
@@ -158,7 +158,7 @@ exports.deleteOne = exceptionHandler(async (req, res, next) => {
 });
 
 //@desc Search Brands
-//@route GET /api/brand/search
+//@route GET /api/v1/brand/search
 //@access Private/Admin
 exports.search = exceptionHandler(async (req, res, next) => {
   const { query, status, category } = req.query;

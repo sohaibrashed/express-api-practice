@@ -7,7 +7,7 @@ const AppError = require("../util/appError");
 const validateObjectId = require("../util/validateObjectId");
 
 //@desc Get all reviews with filtering options
-//@route GET /api/reviews/
+//@route GET /api/v1/reviews/
 //@access Public
 exports.getAll = exceptionHandler(async (req, res, next) => {
   const {
@@ -70,7 +70,7 @@ exports.getAll = exceptionHandler(async (req, res, next) => {
 });
 
 //@desc Get a single review
-//@route GET /api/reviews/:id
+//@route GET /api/v1/reviews/:id
 //@access Public
 exports.getOne = exceptionHandler(async (req, res, next) => {
   const { id } = req.params;
@@ -90,7 +90,7 @@ exports.getOne = exceptionHandler(async (req, res, next) => {
 });
 
 //@desc Create a review
-//@route POST /api/reviews/
+//@route POST /api/v1/reviews/
 //@access Private
 exports.create = exceptionHandler(async (req, res, next) => {
   const { product, rating, comment } = req.body;
@@ -124,7 +124,7 @@ exports.create = exceptionHandler(async (req, res, next) => {
 });
 
 //@desc Update a review
-//@route PATCH /api/reviews/:id
+//@route PATCH /api/v1/reviews/:id
 //@access Private
 exports.updateOne = exceptionHandler(async (req, res, next) => {
   const { id } = req.params;
@@ -152,7 +152,7 @@ exports.updateOne = exceptionHandler(async (req, res, next) => {
 });
 
 //@desc Delete a review
-//@route DELETE /api/reviews/:id
+//@route DELETE /api/v1/reviews/:id
 //@access Private
 exports.deleteOne = exceptionHandler(async (req, res, next) => {
   const { id } = req.params;
@@ -180,7 +180,7 @@ exports.deleteOne = exceptionHandler(async (req, res, next) => {
 });
 
 //@desc Mark a review as helpful
-//@route PATCH /api/reviews/:id/helpful
+//@route PATCH /api/v1/reviews/:id/helpful
 //@access Private
 exports.markHelpful = exceptionHandler(async (req, res, next) => {
   const { id } = req.params;
@@ -202,7 +202,7 @@ exports.markHelpful = exceptionHandler(async (req, res, next) => {
 });
 
 //@desc Get product review statistics
-//@route GET /api/reviews/stats/:productId
+//@route GET /api/v1/reviews/stats/:productId
 //@access Public
 exports.getProductStats = exceptionHandler(async (req, res, next) => {
   const { productId } = req.params;

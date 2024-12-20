@@ -140,22 +140,6 @@ productSchema.virtual("discountPercentage").get(function () {
   return 0;
 });
 
-productSchema.methods.checkVariantStock = function (size, color) {
-  const variant = this.variants.find(
-    (v) =>
-      v.size.toLowerCase() === size.toLowerCase() &&
-      v.color.toLowerCase() === color.toLowerCase()
-  );
-  return variant ? variant.stock : 0;
-};
-
-productSchema.statics.findByCriteria = function (criteria) {
-  return this.find(criteria)
-    .populate("category")
-    .populate("subCategory")
-    .populate("brand");
-};
-
 const Product = mongoose.model("Product", productSchema);
 
 module.exports = Product;
