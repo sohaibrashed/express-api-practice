@@ -1,9 +1,9 @@
 {
 	"info": {
-		"_postman_id": "819c0fd7-8cd1-4956-9961-0c28ff9cde0e",
+		"_postman_id": "baf5e8cb-da26-42cf-86f6-c4484732053d",
 		"name": "express-api-practice",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "38992041"
+		"_exporter_id": "33240793"
 	},
 	"item": [
 		{
@@ -16,7 +16,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"Sohaib Rashed\",\r\n    \"email\":\"sohaib@gmail.com\",\r\n    \"password\":\"password\",\r\n    \"phone\": \"+923200007077\",\r\n    \"role\": \"owner\"\r\n}",
+							"raw": "{\r\n    \"name\": \"Hammad Javed\",\r\n    \"email\":\"ham@gmail.com\",\r\n    \"password\":\"password\",\r\n    \"phone\": \"+923200007077\",\r\n    \"role\": \"user\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -76,6 +76,71 @@
 							"path": [
 								"users",
 								"signout"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "forgotPassword",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"email\": \"ham@gmail.com\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/users/forgot-password",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								"forgot-password"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "verifyEmail",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/users/verify-email/{{token}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								"verify-email",
+								"{{token}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "resetPasssword",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/users/reset-password/{{token}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								"reset-password",
+								"{{token}}"
 							]
 						}
 					},
@@ -364,6 +429,24 @@
 							"path": [
 								"products",
 								"{{product-id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "trending",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/products/trending",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"products",
+								"trending"
 							]
 						}
 					},
@@ -878,6 +961,15 @@
 					"request": {
 						"method": "POST",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"product\": \"676523c44eca25d3e810c299\",\r\n    \"rating\": 3.5,\r\n    \"comment\": \"amazing stuff will buy again for sure\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
 							"raw": "{{baseUrl}}/review",
 							"host": [
@@ -896,12 +988,13 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{baseUrl}}/review",
+							"raw": "{{baseUrl}}/review/{{review-id}}",
 							"host": [
 								"{{baseUrl}}"
 							],
 							"path": [
-								"review"
+								"review",
+								"{{review-id}}"
 							]
 						}
 					},
@@ -913,12 +1006,13 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{baseUrl}}/review",
+							"raw": "{{baseUrl}}/review/{{review-id}}",
 							"host": [
 								"{{baseUrl}}"
 							],
 							"path": [
-								"review"
+								"review",
+								"{{review-id}}"
 							]
 						}
 					},
@@ -929,13 +1023,255 @@
 					"request": {
 						"method": "PATCH",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"rating\": 4.5\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
-							"raw": "{{baseUrl}}/review",
+							"raw": "{{baseUrl}}/review/{{review-id}}",
 							"host": [
 								"{{baseUrl}}"
 							],
 							"path": [
-								"review"
+								"review",
+								"{{review-id}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "favorite",
+			"item": [
+				{
+					"name": "create",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"productId\": \"676523c44eca25d3e810c299\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/favorite",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"favorite"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getAll",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/favorite",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"favorite"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getOne",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/favorite/{{fav-id}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"favorite",
+								"{{fav-id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "deleteOne",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/favorite/{{fav-id}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"favorite",
+								"{{fav-id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "deleteMany",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/favorite",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"favorite"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "upload",
+			"item": [
+				{
+					"name": "profileImage",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "image",
+									"type": "file",
+									"src": "/C:/Users/SOHAIB/Downloads/clothify/profiles/person-1.jpg"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/upload/profile/image",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"upload",
+								"profile",
+								"image"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "productImages",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "images",
+									"type": "file",
+									"src": [
+										"/C:/Users/SOHAIB/Downloads/clothify/products/white-top-1.webp",
+										"/C:/Users/SOHAIB/Downloads/clothify/products/white-top-2.webp",
+										"/C:/Users/SOHAIB/Downloads/clothify/products/white-top-3.webp"
+									]
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/upload/product/image/{{product-id}}/0",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"upload",
+								"product",
+								"image",
+								"{{product-id}}",
+								"0"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "deleteProfileImage",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/upload/profile/image",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"upload",
+								"profile",
+								"image"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "deleteProductsImage",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/upload/product/image/{{product-id}}/0/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"upload",
+								"product",
+								"image",
+								"{{product-id}}",
+								"0",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "deleteProductImages",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/upload/product/image/{{product-id}}/0",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"upload",
+								"product",
+								"image",
+								"{{product-id}}",
+								"0"
 							]
 						}
 					},

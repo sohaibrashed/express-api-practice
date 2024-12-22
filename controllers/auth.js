@@ -31,7 +31,7 @@ exports.signup = exceptionHandler(async (req, res, next) => {
     return next(new AppError("Something went wrong with signup", 400));
   }
 
-  await sendVerificationEmail(newUser);
+  // await sendVerificationEmail(newUser);
 
   const token = generateToken(res, newUser._id);
 
@@ -39,7 +39,6 @@ exports.signup = exceptionHandler(async (req, res, next) => {
     status: "success",
     token,
     data: newUser,
-    message: "Verification email sent. Please check your inbox.",
   });
 });
 
