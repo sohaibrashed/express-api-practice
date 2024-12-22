@@ -143,21 +143,17 @@ exports.create = exceptionHandler(async (req, res, next) => {
 //@route GET /api/v1/orders
 //@access Private/Admin
 exports.getAll = exceptionHandler(async (req, res, next) => {
-  const { data, pagination } = await paginate(
+  const { data: orders, pagination } = await paginate(
     Order,
     req.query,
     {},
     defaultPopulateOptions
   );
 
-  if (!data) {
-    return next(new AppError("No orders found", 404));
-  }
-
   res.status(200).json({
     status: "success",
     pagination,
-    data,
+    data: orders.length > 0 ? orders : [],
   });
 });
 
@@ -168,21 +164,17 @@ exports.getAllMine = exceptionHandler(async (req, res, next) => {
   const { _id } = req.user._doc;
   const filters = { ...req.query, user: _id };
 
-  const { data, pagination } = await paginate(
+  const { data: orders, pagination } = await paginate(
     Order,
     filters,
     {},
     defaultPopulateOptions
   );
 
-  if (!data) {
-    return next(new AppError("No orders found", 404));
-  }
-
   res.status(200).json({
     status: "success",
     pagination,
-    data,
+    data: orders.length > 0 ? orders : [],
   });
 });
 

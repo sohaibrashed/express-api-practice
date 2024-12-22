@@ -28,13 +28,9 @@ exports.createCategory = exceptionHandler(async (req, res, next) => {
 exports.getCategories = exceptionHandler(async (req, res, next) => {
   const allCategories = await Category.find({});
 
-  if (allCategories.length === 0) {
-    return next(new AppError("Categories not found", 404));
-  }
-
   res.status(200).json({
     status: "success",
-    data: allCategories,
+    data: allCategories > 0 ? allCategories : [],
   });
 });
 
@@ -74,12 +70,8 @@ exports.getSubCategories = exceptionHandler(async (req, res, next) => {
     "_id name"
   );
 
-  if (allSubCategories.length === 0) {
-    return next(new AppError("Sub-Categories not found", 404));
-  }
-
   res.status(200).json({
     status: "success",
-    data: allSubCategories,
+    data: allSubCategories.length > 0 ? allSubCategories : [],
   });
 });

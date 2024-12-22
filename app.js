@@ -1,5 +1,6 @@
 require("dotenv").config();
 const express = require("express");
+const { rateLimit } = require("express-rate-limit");
 const cors = require("cors");
 const morgan = require("morgan");
 const cookieParser = require("cookie-parser");
@@ -17,6 +18,7 @@ const reviewRouter = require("./routes/review");
 const favoriteRouter = require("./routes/favorite");
 const dashboardRouter = require("./routes/dashboard");
 const otpRouter = require("./routes/OTP");
+const uploadRouter = require("./routes/upload");
 
 const errorHandler = require("./middlewares/errorHandler");
 
@@ -24,7 +26,7 @@ const app = express();
 
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: process.env.FRONTEND_URL || "http://localhost:5173",
     credentials: true,
   })
 );
@@ -36,6 +38,14 @@ if (process.env.NODE_ENV !== "production") {
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// const limiter = rateLimit({
+//   max: 100,
+//   windowMs: 15 * 60 * 1000, // 15 minutes
+//   message: "Too many requests, please try again later.",
+// });
+
+// app.use("/api", limiter);
 
 app.use(cookieParser());
 app.use(helmet());
@@ -52,6 +62,7 @@ app.use("/api/v1/review", reviewRouter);
 app.use("/api/v1/favorite", favoriteRouter);
 app.use("/api/v1/dashboard", dashboardRouter);
 app.use("/api/v1/otp", otpRouter);
+app.use("/api/v1/upload", uploadRouter);
 
 app.all("*", (req, res, next) => {
   next(new Error(`this ${req.path} URL, NOT FOUND`));

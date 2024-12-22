@@ -105,7 +105,7 @@ exports.getAll = exceptionHandler(async (req, res, next) => {
 
   const sortOrder = sortOptions[sort] || { createdAt: -1 };
 
-  const { data, pagination } = await paginate(
+  const { data: products, pagination } = await paginate(
     Product,
     filter,
     sortOrder,
@@ -118,14 +118,10 @@ exports.getAll = exceptionHandler(async (req, res, next) => {
     limit
   );
 
-  if (!data || data.length === 0) {
-    return next(new AppError("No products found.", 404));
-  }
-
   res.status(200).json({
     status: "success",
     pagination,
-    products: data,
+    data: products.length > 0 ? data : [],
   });
 });
 
@@ -266,13 +262,9 @@ exports.getTrending = exceptionHandler(async (req, res, next) => {
     .populate("category", "name")
     .populate("brand", "name");
 
-  if (trendingProducts.length === 0) {
-    return next(new AppError("No trending products found", 404));
-  }
-
   res.status(200).json({
     status: "success",
     count: trendingProducts.length,
-    products: trendingProducts,
+    data: trendingProducts.length > 0 ? trendingProducts : [],
   });
 });

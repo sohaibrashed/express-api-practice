@@ -27,16 +27,12 @@ exports.create = exceptionHandler(async (req, res, next) => {
 //@route GET /api/v1/users/
 //@access Private/Admin
 exports.getAll = exceptionHandler(async (req, res, next) => {
-  const { data, pagination } = await paginate(User, req.query);
-
-  if (!data) {
-    return next(new AppError("No users found", 404));
-  }
+  const { data: users, pagination } = await paginate(User, req.query);
 
   res.status(200).json({
     status: "success",
     pagination,
-    users: data,
+    data: users.length > 0 ? users : [],
   });
 });
 

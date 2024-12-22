@@ -46,7 +46,7 @@ exports.getAll = exceptionHandler(async (req, res, next) => {
 
   const sortOrder = sortOptions[sort] || { createdAt: -1 };
 
-  const { data, pagination } = await paginate(
+  const { data: reviews, pagination } = await paginate(
     Review,
     filter,
     sortOrder,
@@ -58,14 +58,10 @@ exports.getAll = exceptionHandler(async (req, res, next) => {
     limit
   );
 
-  if (!data || data.length === 0) {
-    return next(new AppError("No reviews found.", 404));
-  }
-
   res.status(200).json({
     status: "success",
     pagination,
-    reviews: data,
+    data: reviews.length > 0 ? reviews : [],
   });
 });
 
@@ -198,88 +194,5 @@ exports.markHelpful = exceptionHandler(async (req, res, next) => {
   res.status(200).json({
     status: "success",
     review,
-  });
-});
-
-//@desc Get product review statistics
-//@route GET /api/v1/reviews/stats/:productId
-//@access Public
-exports.getProductStats = exceptionHandler(async (req, res, next) => {
-  const { productId } = req.params;
-
-  const stats = await Review.aggregate([
-    { $match: { product: mongoose.Types.ObjectId(productId) } },
-    {
-      $group: {
-        _id: null,
-        avgRating: { $avg: "$rating" },
-        totalReviews: { $sum: 1 },
-        verifiedReviews: {
-          $sum: { $cond: ["$isVerifiedPurchase", 1, 0] },
-        },
-        ratingDistribution: {
-          $push: "$rating",
-        },
-      },
-    },
-    {
-      $project: {
-        _id: 0,
-        avgRating: { $round: ["$avgRating", 1] },
-        totalReviews: 1,
-        verifiedReviews: 1,
-        ratingDistribution: {
-          1: {
-            $size: {
-              $filter: {
-                input: "$ratingDistribution",
-                cond: { $eq: ["$$this", 1] },
-              },
-            },
-          },
-          2: {
-            $size: {
-              $filter: {
-                input: "$ratingDistribution",
-                cond: { $eq: ["$$this", 2] },
-              },
-            },
-          },
-          3: {
-            $size: {
-              $filter: {
-                input: "$ratingDistribution",
-                cond: { $eq: ["$$this", 3] },
-              },
-            },
-          },
-          4: {
-            $size: {
-              $filter: {
-                input: "$ratingDistribution",
-                cond: { $eq: ["$$this", 4] },
-              },
-            },
-          },
-          5: {
-            $size: {
-              $filter: {
-                input: "$ratingDistribution",
-                cond: { $eq: ["$$this", 5] },
-              },
-            },
-          },
-        },
-      },
-    },
-  ]);
-
-  if (!stats.length) {
-    return next(new AppError("No reviews found for this product", 404));
-  }
-
-  res.status(200).json({
-    status: "success",
-    stats: stats[0],
   });
 });

@@ -31,13 +31,9 @@ exports.getAll = exceptionHandler(async (req, res, next) => {
 
   const favorites = await Favorite.find({ userId }).populate("productId");
 
-  if (!favorites.length) {
-    return next(new AppError("No favorites found", 404));
-  }
-
   res.status(200).json({
     status: "success",
-    favorites,
+    data: favorites.length > 0 ? favorites : [],
   });
 });
 

@@ -10,14 +10,10 @@ const validateObjectId = require("../util/validateObjectId");
 exports.getAll = exceptionHandler(async (req, res, next) => {
   const storedBrands = await Brand.find().populate("categories");
 
-  if (storedBrands.length === 0) {
-    return next(new AppError("No brands found", 404));
-  }
-
   res.status(200).json({
     status: "success",
     results: storedBrands.length,
-    data: storedBrands,
+    data: storedBrands.length > 0 ? storedBrands : [],
   });
 });
 
@@ -186,6 +182,6 @@ exports.search = exceptionHandler(async (req, res, next) => {
   res.status(200).json({
     status: "success",
     results: brands.length,
-    data: brands,
+    data: brands.length > 0 ? brands : [],
   });
 });

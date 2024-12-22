@@ -1,27 +1,17 @@
-const twilio = require("twilio");
-const OTP = require("../models/OTP");
 const crypto = require("crypto");
+const client = require("../config/twilio");
+const OTP = require("../models/OTP");
 
-// Twilio client initialization
-const client = twilio(
-  process.env.TWILIO_ACCOUNT_SID,
-  process.env.TWILIO_AUTH_TOKEN
-);
-
-// Generate a random 6-digit OTP
 function generateOTP() {
   return crypto.randomInt(100000, 999999).toString();
 }
 
-// Send OTP via WhatsApp
 async function sendOTP(phoneNumber) {
   const otp = generateOTP();
 
   try {
-    // Save OTP to MongoDB
     await OTP.create({ phoneNumber, otp });
 
-    // Send OTP via Twilio WhatsApp API
     await client.messages.create({
       from: process.env.TWILIO_WHATSAPP_NUMBER,
       to: `whatsapp:${phoneNumber}`,
@@ -36,18 +26,21 @@ async function sendOTP(phoneNumber) {
   }
 }
 
-// Verify OTP
 async function verifyOTP(phoneNumber, enteredOTP) {
-  const otpRecord = await OTP.findOne({ phoneNumber, otp: enteredOTP });
+  try {
+    const otpRecord = await OTP.findOne({ phoneNumber, otp: enteredOTP });
 
-  if (!otpRecord) {
-    return { success: false, message: "Invalid OTP or expired." };
+    if (!otpRecord) {
+      return { success: false, message: "Invalid OTP or expired." };
+    }
+
+    await OTP.deleteOne({ _id: otpRecord._id });
+
+    return { success: true, message: "OTP verified successfully." };
+  } catch (error) {
+    console.error("Error verifying OTP:", error);
+    return { success: false, message: "Failed to verify OTP." };
   }
-
-  // OTP is valid - delete it to prevent reuse
-  await OTP.deleteOne({ _id: otpRecord._id });
-
-  return { success: true, message: "OTP verified successfully." };
 }
 
 module.exports = { sendOTP, verifyOTP };
