@@ -160,14 +160,14 @@ const OrderSchema = new mongoose.Schema(
       },
       phone: {
         type: String,
-        required: [true, "Phone number is required."],
+        // required: [true, "Phone number is required."],
         trim: true,
-        validate: {
-          validator: function (value) {
-            return validate.isMobilePhone(value);
-          },
-          message: "Invalid phone number format.",
-        },
+        // validate: {
+        //   validator: function (value) {
+        //     return validate.isMobilePhone(value);
+        //   },
+        //   message: "Invalid phone number format.",
+        // },
       },
     },
     notes: {

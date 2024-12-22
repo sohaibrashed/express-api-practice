@@ -1,120 +1,177 @@
-const connectDb = require("./config/db");
 const mongoose = require("mongoose");
+const connectDb = require("./config/db");
 
+// Import models
+const User = require("./models/user");
 const Product = require("./models/product");
-const productItems = require("./dataset/ecommerce_clothes_data.json");
-
 const Category = require("./models/category");
 const SubCategory = require("./models/subCategory");
-const predefinedCategories = require("./util/predefinedCategories");
+const Brand = require("./models/brand");
+const Order = require("./models/order");
+const Review = require("./models/review");
+const Favorite = require("./models/favorite");
 
-const User = require("./models/user");
-const userData = require("./dataset/ecommerce_users_data.json");
+// Import data
+const baseData = require("./dataset/base_data.json");
+const userData = require("./dataset/users_data.json");
+const productData = require("./dataset/products_data.json");
+const orderData = require("./dataset/orders_data.json");
+const reviewData = require("./dataset/reviews_data.json");
+const favoriteData = require("./dataset/favorites_data.json");
 
-const productsLength = productItems.length - 18000;
-const usersLength = userData.length;
+async function clearDatabase() {
+  console.log("Clearing existing data...");
+  await Promise.all([
+    User.deleteMany({}),
+    Product.deleteMany({}),
+    Category.deleteMany({}),
+    SubCategory.deleteMany({}),
+    Brand.deleteMany({}),
+    Order.deleteMany({}),
+    Review.deleteMany({}),
+    Favorite.deleteMany({}),
+  ]);
+  console.log("Database cleared!");
+}
 
-async function seedProducts() {
+async function seedBaseData() {
+  console.log("Seeding categories, subcategories, and brands...");
   try {
-    await connectDb();
-    let counter = 0;
-    for (let i = 0; i < productsLength; i++) {
-      await Product.create(productItems[i]);
-      counter++;
-    }
-    console.log(`Created ${counter} Products successfully`);
+    await Category.insertMany(baseData.categories);
+    await SubCategory.insertMany(baseData.subCategories);
+    await Brand.insertMany(baseData.brands);
+    console.log(`Seeded:
+      - ${baseData.categories.length} categories
+      - ${baseData.subCategories.length} subcategories
+      - ${baseData.brands.length} brands`);
   } catch (error) {
-    console.error("Products Seeder failed");
-    console.error(error);
+    console.error("Base data seeding failed:", error);
+    throw error;
   }
 }
 
 async function seedUsers() {
+  console.log("Seeding users...");
   try {
-    await connectDb();
-    let counter = 0;
-    for (let i = 0; i < usersLength; i++) {
-      await User.create(userData[i]);
-      counter++;
-    }
-    console.log(`Created ${counter} Users successfully`);
+    await User.insertMany(userData);
+    console.log(`Seeded ${userData.length} users`);
   } catch (error) {
-    console.error("User Seeder failed");
-    console.error(error);
+    console.error("User seeding failed:", error);
+    throw error;
   }
 }
 
-async function seedCategories() {
+async function seedProducts() {
+  console.log("Seeding products...");
   try {
-    await connectDb();
-
-    const existingCategories = await Category.find({});
-    if (existingCategories.length > 0) {
-      console.log("Categories already exist. Skipping seeding.");
-      return;
-    }
-
-    const categoriesToSeed = Object.keys(predefinedCategories).map((name) => ({
-      name,
-    }));
-
-    const seededCategories = await Category.insertMany(categoriesToSeed);
-    console.log("Seeded Categories:", seededCategories);
+    await Product.insertMany(productData);
+    console.log(`Seeded ${productData.length} products`);
   } catch (error) {
-    console.error("Category seeding failed:", error.message);
+    console.error("Product seeding failed:", error);
+    throw error;
   }
 }
 
-async function seedSubCategories() {
+async function seedOrders() {
+  console.log("Seeding orders...");
   try {
-    await connectDb();
-
-    const existingSubCategories = await SubCategory.find({});
-    if (existingSubCategories.length > 0) {
-      console.log("Subcategories already exist. Skipping seeding.");
-      return;
-    }
-
-    const categories = await Category.find({});
-    if (!categories || categories.length === 0) {
-      console.error("No categories found. Please seed categories first.");
-      return;
-    }
-
-    const subCategoriesToSeed = [];
-    for (const [categoryName, subCategoryNames] of Object.entries(
-      predefinedCategories
-    )) {
-      const category = categories.find((cat) => cat.name === categoryName);
-      if (!category) {
-        console.error(`Category '${categoryName}' not found.`);
-        continue;
-      }
-
-      subCategoryNames.forEach((subCategoryName) => {
-        subCategoriesToSeed.push({
-          name: subCategoryName,
-          category: category._id,
-        });
-      });
-    }
-
-    const seededSubCategories = await SubCategory.insertMany(
-      subCategoriesToSeed
-    );
-    console.log("Seeded SubCategories:", seededSubCategories);
+    await Order.insertMany(orderData);
+    console.log(`Seeded ${orderData.length} orders`);
   } catch (error) {
-    console.error("SubCategory seeding failed:", error.message);
+    console.error("Order seeding failed:", error);
+    throw error;
   }
+}
+
+async function seedReviews() {
+  console.log("Seeding reviews...");
+  try {
+    await Review.insertMany(reviewData);
+    console.log(`Seeded ${reviewData.length} reviews`);
+  } catch (error) {
+    console.error("Review seeding failed:", error);
+    throw error;
+  }
+}
+
+async function seedFavorites() {
+  console.log("Seeding favorites...");
+  try {
+    await Favorite.insertMany(favoriteData);
+    console.log(`Seeded ${favoriteData.length} favorites`);
+  } catch (error) {
+    console.error("Favorites seeding failed:", error);
+    throw error;
+  }
+}
+
+async function updateProductRatings() {
+  console.log("Updating product ratings...");
+  const products = await Product.find({});
+
+  for (const product of products) {
+    const reviews = await Review.find({ product: product._id });
+    if (reviews.length > 0) {
+      const averageRating =
+        reviews.reduce((acc, review) => acc + review.rating, 0) /
+        reviews.length;
+      product.ratings = {
+        average: parseFloat(averageRating.toFixed(1)),
+        count: reviews.length,
+      };
+      await product.save();
+    }
+  }
+  console.log("Product ratings updated!");
 }
 
 async function runSeeders() {
-  console.log("Seeders are stopped. Kindly check Seeder.js file");
-  // await seedProducts();
-  // await seedUsers();
-  // await seedCategories();
-  // await seedSubCategories();
-  // await mongoose.disconnect();
+  try {
+    console.log("Starting database seeding...");
+    await connectDb();
+
+    // Clear existing data
+    await clearDatabase();
+
+    // Seed all data in proper order
+    await seedBaseData();
+    await seedUsers();
+    await seedProducts();
+    await seedOrders();
+    await seedReviews();
+    await seedFavorites();
+
+    // Update product ratings based on reviews
+    await updateProductRatings();
+
+    console.log("Database seeding completed successfully!");
+  } catch (error) {
+    console.error("Seeding failed:", error);
+  } finally {
+    await mongoose.disconnect();
+  }
 }
 
-runSeeders();
+// Add command line arguments to control seeding
+const args = process.argv.slice(2);
+if (args.includes("--clear-only")) {
+  connectDb()
+    .then(() => clearDatabase())
+    .then(() => mongoose.disconnect())
+    .then(() => console.log("Database cleared successfully!"))
+    .catch(console.error);
+} else {
+  runSeeders();
+}
+
+module.exports = {
+  clearDatabase,
+  seedBaseData,
+  seedUsers,
+  seedProducts,
+  seedOrders,
+  seedReviews,
+  seedFavorites,
+  updateProductRatings,
+  runSeeders,
+};

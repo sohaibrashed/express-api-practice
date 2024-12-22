@@ -46,12 +46,12 @@ const userSchema = new mongoose.Schema(
     phone: {
       type: String,
       required: [true, "Phone number is required."],
-      validate: {
-        validator: function (value) {
-          return validate.isMobilePhone(value);
-        },
-        message: "Invalid phone number format.",
-      },
+      // validate: {
+      //   validator: function (value) {
+      //     return validate.isMobilePhone(value);
+      //   },
+      //   message: "Invalid phone number format.",
+      // },
     },
     emailVerified: {
       type: Boolean,

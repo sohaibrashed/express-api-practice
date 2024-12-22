@@ -9,6 +9,7 @@
     "test:user:unit": "jest __test__/user_unit.test.js",
     "test:product": "jest __test__/product.test.js",
     "seeder": "node seeder.js",
+    "fake:data:gen": "node ./dataset/generateAll.js",
     "server": "nodemon server.js"
   },
   "jest": {
