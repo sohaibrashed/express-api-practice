@@ -4,14 +4,12 @@ const paginate = async (
   model,
   queryParams,
   sortOrder = {},
-  populateFields = []
+  populateFields = [],
+  page = 1,
+  limit = process.env.LIMIT || 10
 ) => {
   try {
-    const {
-      page = 1,
-      limit = process.env.LIMIT || 10,
-      ...filters
-    } = queryParams;
+    const { ...filters } = queryParams;
 
     const currentPage = Math.max(1, parseInt(page));
     const itemsPerPage = Math.max(1, parseInt(limit));

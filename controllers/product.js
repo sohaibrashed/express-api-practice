@@ -38,7 +38,7 @@ async function validateSubCategory(categoryName, subCategoryName) {
 exports.getAll = exceptionHandler(async (req, res, next) => {
   const {
     page = 1,
-    limit = 10,
+    limit = process.env.LIMIT || 10,
     category,
     subCategory,
     brand,
@@ -97,6 +97,7 @@ exports.getAll = exceptionHandler(async (req, res, next) => {
     "price-low-high": { "price.base": 1 },
     "price-high-low": { "price.base": -1 },
     "rating-high-low": { "ratings.average": -1 },
+    "rating-low-high": { "ratings.average": 1 },
     newest: { createdAt: -1 },
     oldest: { createdAt: 1 },
     "a-z": { name: 1 },
@@ -121,7 +122,7 @@ exports.getAll = exceptionHandler(async (req, res, next) => {
   res.status(200).json({
     status: "success",
     pagination,
-    data: products.length > 0 ? data : [],
+    data: products.length > 0 ? products : [],
   });
 });
 

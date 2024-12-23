@@ -27,7 +27,16 @@ exports.create = exceptionHandler(async (req, res, next) => {
 //@route GET /api/v1/users/
 //@access Private/Admin
 exports.getAll = exceptionHandler(async (req, res, next) => {
-  const { data: users, pagination } = await paginate(User, req.query);
+  const { page, limit } = req.query;
+  let filter = {};
+  const { data: users, pagination } = await paginate(
+    User,
+    filter,
+    {},
+    [],
+    page,
+    limit
+  );
 
   res.status(200).json({
     status: "success",
