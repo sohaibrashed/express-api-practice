@@ -12,7 +12,7 @@ const validateObjectId = require("../util/validateObjectId");
 exports.getAll = exceptionHandler(async (req, res, next) => {
   const {
     page = 1,
-    limit = 10,
+    limit = process.env.LIMIT || 10,
     product,
     user,
     minRating,
@@ -23,8 +23,8 @@ exports.getAll = exceptionHandler(async (req, res, next) => {
 
   const filter = {};
 
-  if (product) filter.product = await validateObjectId(Product, product);
-  if (user) filter.user = await validateObjectId(User, user);
+  if (product) filter.product = product;
+  if (user) filter.user = user;
 
   if (minRating || maxRating) {
     filter.rating = {};
@@ -51,8 +51,8 @@ exports.getAll = exceptionHandler(async (req, res, next) => {
     filter,
     sortOrder,
     [
-      { path: "user", select: "name avatar" },
-      { path: "product", select: "name images" },
+      { path: "user", select: "name image" },
+      { path: "product", select: "name" },
     ],
     page,
     limit
